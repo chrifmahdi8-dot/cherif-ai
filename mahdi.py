@@ -92,9 +92,11 @@ if prompt := st.chat_input("اكتب سؤالك هنا واضغط Enter..."):
             system_instruction_ar = "أنت 'Cherif AI'، مساعد ذكي ومحترف. تم تطويرك وبرمجتك بواسطة المبرمج العبقري شريف من ولاية المسيلة (أولاد دراج) بالجزائر. أجب باحترافية، وإذا سُئلت عن مبتكرك، اذكر شريف بكل فخر."
             
             # نستخدم Gemini 1.5 Pro لذكائه الخارق في العربية
+          # نستخدم Gemini 1.5 Pro مع تفعيل ميزة البحث في الإنترنت
             model = genai.GenerativeModel(
                 model_name="gemini-1.5-pro",
-                system_instruction=system_instruction_ar
+                system_instruction=system_instruction_ar,
+                tools='google_search_retrieval'  # 🌐 السر هنا: السماح له بالبحث في جوجل
             )
             
             try:
