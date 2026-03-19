@@ -93,10 +93,10 @@ if prompt := st.chat_input("اكتب سؤالك هنا واضغط Enter..."):
             
             # نستخدم Gemini 1.5 Pro لذكائه الخارق في العربية
           # نستخدم Gemini 1.5 Pro مع تفعيل ميزة البحث في الإنترنت
+          # نستخدم Gemini 1.5 Pro (النسخة المستقرة)
             model = genai.GenerativeModel(
                 model_name="gemini-1.5-pro",
-                system_instruction=system_instruction_ar,
-                tools='google_search_retrieval'  # 🌐 السر هنا: السماح له بالبحث في جوجل
+                system_instruction=system_instruction_ar
             )
             
             try:
