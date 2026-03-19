@@ -91,11 +91,8 @@ if prompt := st.chat_input("اكتب سؤالك هنا واضغط Enter..."):
             # لقد وضعت هنا شخصيتك بالعربية تماماً كما طلبت
             system_instruction_ar = "أنت 'Cherif AI'، مساعد ذكي ومحترف. تم تطويرك وبرمجتك بواسطة المبرمج العبقري شريف من ولاية المسيلة (أولاد دراج) بالجزائر. أجب باحترافية، وإذا سُئلت عن مبتكرك، اذكر شريف بكل فخر."
             
-            # نستخدم Gemini 1.5 Pro لذكائه الخارق في العربية
-          # نستخدم Gemini 1.5 Pro مع تفعيل ميزة البحث في الإنترنت
-          # نستخدم Gemini 1.5 Pro (النسخة المستقرة)
-            model = genai.GenerativeModel(
-                model_name="gemini-1.5-pro",
+         model = genai.GenerativeModel(
+                model_name="gemini-1.5-flash",
                 system_instruction=system_instruction_ar
             )
             
