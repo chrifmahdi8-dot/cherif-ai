@@ -16,29 +16,29 @@ st.set_page_config(
 )
 
 hide_streamlit_style = """
-            <style>
-            #MainMenu {visibility: hidden;}
-            footer {visibility: hidden;}
-            header {visibility: hidden;}
-            div.footer {display: none !important;}
-            div.stFooter, div[data-testid="stFooter"] {display: none !important;}
-            div.stHeader, div[data-testid="stHeader"] {display: none !important;}
-            
-            /* تحسين مظهر واجهة المحادثة */
-            [data-testid="stChatMessageAvatarAssistant"] { background-color: #10B981; }
-            [data-testid="stChatMessageAssistant"] { background-color: #F0FDF4; border-radius: 10px; padding: 10px; }
-            
-            /* تخصيص مظهر الأزرار */
-            .stButton>button { background-color: #10B981; color: white; border-radius: 5px; border: none; }
-            .stButton>button:hover { background-color: #059669; color: white; }
-            
-            /* تصميم بطاقات المنتجات */
-            .prod-card { background-color: white; padding: 15px; border-radius: 10px; border: 1px solid #A7F3D0; text-align: center; margin-bottom: 20px; transition: 0.3s; }
-            .prod-card:hover { box-shadow: 0 4px 8px rgba(16, 185, 129, 0.2); border-color: #10B981; }
-            .prod-card h4 { color: #10B981; margin-top: 10px; font-family: sans-serif;}
-            .prod-card p { font-size: 0.9rem; color: #444; }
-            </style>
-            """
+<style>
+#MainMenu {visibility: hidden;}
+footer {visibility: hidden;}
+header {visibility: hidden;}
+div.footer {display: none !important;}
+div.stFooter, div[data-testid="stFooter"] {display: none !important;}
+div.stHeader, div[data-testid="stHeader"] {display: none !important;}
+
+/* تحسين مظهر واجهة المحادثة */
+[data-testid="stChatMessageAvatarAssistant"] { background-color: #10B981; }
+[data-testid="stChatMessageAssistant"] { background-color: #F0FDF4; border-radius: 10px; padding: 10px; }
+
+/* تخصيص مظهر الأزرار */
+.stButton>button { background-color: #10B981; color: white; border-radius: 5px; border: none; }
+.stButton>button:hover { background-color: #059669; color: white; }
+
+/* تصميم بطاقات المنتجات */
+.prod-card { background-color: white; padding: 15px; border-radius: 10px; border: 1px solid #A7F3D0; text-align: center; margin-bottom: 20px; transition: 0.3s; }
+.prod-card:hover { box-shadow: 0 4px 8px rgba(16, 185, 129, 0.2); border-color: #10B981; }
+.prod-card h4 { color: #10B981; margin-top: 10px; font-family: sans-serif;}
+.prod-card p { font-size: 0.9rem; color: #444; }
+</style>
+"""
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
 # ==========================================
@@ -65,7 +65,7 @@ with cols[1]:
         logo = Image.open("logo.jpg.jpg") # اسم صورة اللوغو
         st.image(logo, use_container_width=True)
     except FileNotFoundError:
-        st.warning("⚠️ اللوغو غير موجود، تأكد من وضع صورة '1000030304.jpg' في المجلد.")
+        st.warning("⚠️ اللوغو غير موجود، تأكد من رفع صورة باسم 'logo.jpg.jpg'.")
 
 st.markdown("<h1 style='text-align: center; color: #065F46; font-size: 2.2rem;'>مختبرات Massilya - خبيرك الرقمي</h1>", unsafe_allow_html=True)
 st.markdown("<p style='text-align: center; color: #10B981; font-size: 1.1rem;'>العناية بالبشرة، التجميل، والتغذية - استشارة احترافية 24/7</p>", unsafe_allow_html=True)
@@ -77,7 +77,7 @@ st.markdown("---")
 st.markdown("<h2 style='text-align: right; color: #065F46;'>✨ تشكيلة منتجاتنا المتخصصة</h2>", unsafe_allow_html=True)
 
 prod_cols = st.columns(4)
-# المنتجات الحالية (سنضيف الباقي لاحقاً)
+# المنتجات المعروضة في الواجهة
 placeholders = [
     {"name": "كريم 30% يوريا", "desc": "علاج جلد الدجاجة والشعر تحت الجلد"},
     {"name": "محلول تساقط الشعر", "desc": "بزيت إكليل الجبل وفيتامين B5"},
@@ -87,6 +87,7 @@ placeholders = [
     {"name": "غسول للبشرة الجافة", "desc": "خالي من الصابون والسلفات"},
     {"name": "كريم الاستحمام", "desc": "غني بزيت اللوز الحلو لرغوة حريرية"},
     {"name": "جل الاستحمام", "desc": "ترطيب 100% بتركيز غليسيرين 5%"}
+]
 
 for i, prod in enumerate(placeholders):
     with prod_cols[i % 4]:
@@ -124,37 +125,33 @@ if prompt := st.chat_input("اكتبوا سؤالكم لخبير Massilya الآ
         with st.spinner("⏳ الخبير يحلل نوع بشرتك..."):
             
             # --- برمجة شخصية مندوب Massilya ---
-           current_date = datetime.now().strftime("%Y-%m-%d")
+            current_date = datetime.now().strftime("%Y-%m-%d")
             system_instruction = f"""
-            أنت خبير مبيعات وطبيب أمراض جلدية (Dermatologist) تعمل في متجر 'Massilya Dermo-Cosmétiques'. تاريخ اليوم هو {current_date}.
+            أنت خبير مبيعات وطبيب أمراض جلدية تعمل في متجر 'Massilya Dermo-Cosmétiques' (ماسيلية للمواد الجلدية والتجميلية). تاريخ اليوم هو {current_date}.
             
             [قاعدة ذهبية]: 
             - تكلم بلهجة جزائرية محترمة جداً، ودودة، وقصيرة (الدارجة).
-            - أنت خبير، إذا سألتك الزبونة عن مشكلة (تساقط، حب شباب، جلد الدجاجة)، اشرح لها السبب باختصار ثم انصحها بالمنتج المناسب من قائمتك.
-            - هدفك النهائي: إقناع الزبونة وأخذ (الاسم، الولاية، ورقم الهاتف). التوصيل: العاصمة 400 دج، وباقي الولايات 600 دج.
+            - أنت خبير، إذا سألتك الزبونة عن مشكلة، اشرح لها السبب باختصار ثم انصحها بالمنتج المناسب من قائمتك.
+            - هدفك النهائي: جمع (الاسم، الولاية، ورقم الهاتف) لإتمام الطلبية. التوصيل للعاصمة 400 دج، وباقي الولايات 600 دج.
             
-            [قائمة المنتجات الـ 12 المتوفرة (لا تبع غيرها)]:
-            
+            [قائمة المنتجات الـ 12 المتوفرة]:
             🧴 قسم العناية بالوجه:
-            1. غسول أصفر (للبشرة العادية/المختلطة): 500 دج. مرطب ومكونات طبيعية.
-            2. غسول أزرق (للبشرة الجافة/الحساسة): 500 دج. خالي من الصابون والسلفات.
-            3. غسول أخضر (للبشرة الدهنية): 500 دج. بخلاصة الألوفيرا، يقلل الدهون.
-            4. غسول أبيض/أزرق (حب الشباب الخفيف 1%): 500 دج. يقشر البشرة.
-            5. غسول أسود (مقشر قوي 2% BHA): 950 دج. يقضي على حب الشباب العميق والنقاط السوداء.
+            1. غسول أصفر (للبشرة العادية/المختلطة): 500 دج.
+            2. غسول أزرق (للبشرة الجافة/الحساسة): 500 دج. خالي من الصابون.
+            3. غسول أخضر (للبشرة الدهنية): 500 دج. بالألوفيرا.
+            4. غسول أبيض/أزرق (ضد حب الشباب 1%): 500 دج.
+            5. غسول أسود (مقشر قوي 2% BHA): 950 دج. ضد حب الشباب العميق والنقاط السوداء.
             
             💆‍♀️ قسم العناية بالشعر:
-            6. شامبو ضد القشرة (DS): 750 دج. يعالج حكة الفروة والفطريات.
-            7. محلول ضد تساقط الشعر (Lotion): 1100 دج. بزيت إكليل الجبل وفيتامين B5.
-            8. شامبو للشعر الجاف والمتقصف: 800 دج. يغذي بالبروتينات ويحمي من التساقط.
+            6. شامبو ضد القشرة (DS): 750 دج.
+            7. محلول ضد تساقط الشعر (Lotion): 1100 دج. بزيت إكليل الجبل.
+            8. شامبو للشعر الجاف والمتقصف: 800 دج. يغذي بالبروتينات.
             
             🛁 قسم العناية بالجسم:
-            9. جل الاستحمام (للبشرة الجافة): 500 دج. غليسيرين 5% للترطيب (400مل).
-            10. كريم الاستحمام المرغي: 500 دج. بزيت اللوز الحلو، خالي من البارابين.
-            11. كريم مقشر 30% يوريا: 850 دج. العلاج السحري لـ (جلد الدجاجة، الشعر تحت الجلد، تشقق القدمين) غني بزبدة الشيا.
-            
-            [أمثلة للرد]:
-            - إذا قالت "عندي جلد الدجاجة": قل "ننصحك بكريم 30% يوريا، راهو سبيسيال للشعر تحت الجلد وجلد الدجاجة بـ 850 دج برك".
-            - إذا قالت "شعري يطيح": قل "عندنا روتين هايل: محلول إكليل الجبل (1100 دج) مع شامبو الشعر المتقصف (800 دج)، يحبسو التساقط".
+            9. جل الاستحمام (للبشرة الجافة): 500 دج. غليسيرين 5%.
+            10. كريم الاستحمام المرغي: 500 دج. بزيت اللوز الحلو.
+            11. كريم مقشر 30% يوريا: 850 دج. لجلد الدجاجة والشعر تحت الجلد.
+            12. غسول PanOxyl (مستورد): بسعر 3,700 دج.
             """
             
             api_messages = [{"role": "system", "content": system_instruction}]
