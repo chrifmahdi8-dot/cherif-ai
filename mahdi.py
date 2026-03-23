@@ -3,9 +3,9 @@ import requests
 from datetime import datetime
 
 # ==========================================
-# 1. إعدادات الصفحة والتمويه
+# 1. إعدادات الصفحة والتمويه الشامل
 # ==========================================
-st.set_page_config(page_title="متجر الأناقة | المندوب الذكي", page_icon="🛒", layout="wide")
+st.set_page_config(page_title="متجر الأناقة | المندوب السريع", page_icon="⚡", layout="wide")
 
 hide_streamlit_style = """
             <style>
@@ -20,38 +20,38 @@ hide_streamlit_style = """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
 # ==========================================
-# 2. القائمة الجانبية
+# 2. القائمة الجانبية (إحصائيات المتجر)
 # ==========================================
 with st.sidebar:
-    st.markdown("# 🛒 متجر الأناقة")
+    st.markdown("# ⚡ متجر الأناقة")
     st.markdown("---")
-    st.info("**النظام:** المندوب الذكي (AI Sales)\n\n**المطور:** Sharif (CEO)\n\n**المحرك:** DeepSeek-Chat 🐲")
+    st.info("**النظام:** المندوب الخارق (AI Sales)\n\n**المطور:** Sharif (CEO)\n\n**المحرك:** Groq / Llama 3.1 🚀")
     st.markdown("---")
     
-    if st.button("🗑️ مسح المحادثة لبدء زبون جديد"):
+    if st.button("🗑️ استقبال زبون جديد"):
         st.session_state.messages = [
-            {"role": "assistant", "content": "مرحباً بك في متجر الأناقة! 👟 أنا المندوب الذكي، واش خصك اليوم؟"}
+            {"role": "assistant", "content": "مرحباً بك في متجر الأناقة! 👟 أنا المندوب السريع، كيف يمكنني خدمتك اليوم؟"}
         ]
         st.rerun() 
         
     st.markdown("---")
-    st.caption("Powered by Cherif AI Solutions © 2026")
+    st.caption("© 2026 Sharif Tech Solutions")
 
 # ==========================================
-# 3. مفتاح DeepSeek المدمج (جاهز للاستخدام 🔑)
+# 3. مفتاح Groq السري (مدمج وجاهز 🔑)
 # ==========================================
-DEEPSEEK_API_KEY = "sk-60a3468541be4cecb7b1d0ece20d14d1"
+GROQ_API_KEY = "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"
 
 # ==========================================
 # 4. الواجهة الرئيسية
 # ==========================================
-st.title("🛒 تحدث مع مندوب المبيعات الذكي")
-st.markdown("#### مدعوم بعبقرية DeepSeek لاصطياد الزبائن.")
+st.title("🛒 مندوب المبيعات الخارق (Groq)")
+st.markdown("#### سرعة رد خيالية بفضل تقنية Llama 3.1.")
 st.markdown("---")
 
 if "messages" not in st.session_state:
     st.session_state.messages = [
-        {"role": "assistant", "content": "مرحباً بك في متجر الأناقة! 👟 أنا المندوب الذكي، واش خصك اليوم؟"}
+        {"role": "assistant", "content": "مرحباً بك في متجر الأناقة! 👟 أنا المندوب السريع، واش خصك اليوم؟ (نايك، أديداس، أو استفسار عن التوصيل؟)"}
     ]
 
 for message in st.session_state.messages:
@@ -59,7 +59,7 @@ for message in st.session_state.messages:
         st.write(message["content"])
 
 # ==========================================
-# 5. عقل DeepSeek وجاسوس التليجرام
+# 5. منطق التشغيل (عقل Llama 3.1)
 # ==========================================
 if prompt := st.chat_input("اكتب سؤالك هنا..."):
     
@@ -68,43 +68,43 @@ if prompt := st.chat_input("اكتب سؤالك هنا..."):
         st.write(prompt)
 
     with st.chat_message("assistant"):
-        with st.spinner("⏳ المندوب يكتب..."):
+        with st.spinner("⏳ المندوب يكتب بسرعة البرق..."):
             
-            # --- بناء الشخصية الصارمة للمبيعات ---
+            # --- برمجة شخصية البائع الصارم جداً ---
             current_date = datetime.now().strftime("%Y-%m-%d")
-            system_instruction_ar = f"""
-            أنت مندوب مبيعات جزائري محترف اسمك 'شريف بوت'. تعمل في 'متجر الأناقة' لبيع الأحذية الرياضية.
-            تاريخ اليوم هو {current_date}.
+            system_instruction = f"""
+            أنت بائع جزائري محترف وذكي جداً في 'متجر الأناقة'. تاريخ اليوم هو {current_date}.
             
-            [تحذير صارم جداً]: أنت بائع ولست موسوعة ويكيبيديا! ممنوع منعاً باتاً إعطاء معلومات تاريخية، عامة، أو تفاصيل عن تأسيس الشركات. إذا ذكر الزبون اسم ماركة (مثل أديداس أو نايك)، فمهمتك الوحيدة هي إخباره أنها متوفرة وسؤاله عن المقاس!
+            [قاعدة ذهبية]: ممنوع إعطاء دروس تاريخ أو معلومات عامة. إذا قال الزبون 'أديداس'، لا تتحدث عن ألمانيا! قل له 'أديداس ماركة عالمية وراهي متوفرة عندنا، واش من مقاس تلبس؟'.
             
-            قواعد المتجر:
-            1. نبيع أحذية أصلية (Nike, Adidas, New Balance).
-            2. السعر ثابت: 4500 دينار جزائري.
-            3. المقاسات: 39 إلى 44.
-            4. التوصيل: العاصمة بـ 400 دج، وباقي الولايات بـ 600 دج.
+            معلومات المتجر:
+            - المنتجات: أحذية أصلية Nike, Adidas, New Balance.
+            - السعر: 4500 دج ثابت.
+            - المقاسات: 39 إلى 44.
+            - التوصيل: العاصمة 400 دج، باقي الولايات 600 دج.
             
-            طريقة حديثك:
-            - تكلم بلهجة جزائرية محترمة، قصيرة جداً ومباشرة.
-            - إذا اختار الزبون الماركة، اسأله فوراً: "اختيار ممتاز! واش من مقاس تلبس؟"
-            - إذا وافق على السعر، قل له: "ممتاز، باش نأكدلك الطلبية، أعطيني اسمك، رقم التيليفون، والولاية ديالك".
+            أسلوب الرد:
+            - لهجة جزائرية محترمة وقصيرة جداً.
+            - إذا طلب الشراء، اطلب منه (الاسم، رقم الهاتف، والولاية).
+            - لا تجب عن أي شيء خارج موضوع المبيعات في المتجر.
             """
             
-            # --- تجهيز المحادثة ---
-            api_messages = [{"role": "system", "content": system_instruction_ar}]
+            # تجهيز المحادثة لـ Groq
+            api_messages = [{"role": "system", "content": system_instruction}]
             for msg in st.session_state.messages:
-                api_messages.append({"role": msg["role"], "content": msg["content"]})
-                
-            # --- الاتصال بسيرفرات DeepSeek ---
-            url = "https://api.deepseek.com/chat/completions"
+                # Groq يستخدم "assistant" بدلاً من "model"
+                role = "assistant" if msg["role"] == "assistant" else "user"
+                api_messages.append({"role": role, "content": msg["content"]})
+            
+            url = "https://api.groq.com/openai/v1/chat/completions"
             headers = {
-                "Content-Type": "application/json",
-                "Authorization": f"Bearer {DEEPSEEK_API_KEY}"
+                "Authorization": f"Bearer {GROQ_API_KEY}",
+                "Content-Type": "application/json"
             }
             payload = {
-                "model": "deepseek-chat",
+                "model": "llama-3.1-70b-versatile",
                 "messages": api_messages,
-                "temperature": 0.5 
+                "temperature": 0.6
             }
             
             try:
@@ -115,31 +115,23 @@ if prompt := st.chat_input("اكتب سؤالك هنا..."):
                     st.write(answer)
                     st.session_state.messages.append({"role": "assistant", "content": answer})
                     
-                    # --- 🚀 جاسوس التليجرام ---
+                    # --- 🚀 جاسوس التليجرام (شغال 100%) ---
                     try:
                         bot_token = "8758469394:AAFnu5x88Bn1XZSPyEvninIoQ5-TB3JMpPw"
                         chat_id = "5111187631"
                         
                         if any(char.isdigit() for char in prompt) and len(prompt) > 8:
-                            alert_title = "💰🚨 طلبية محتملة / رقم هاتف التقطناه!"
+                            tag = "💰🚨 طلبية / رقم هاتف!"
                         else:
-                            alert_title = "💬 محادثة زبون جديدة"
+                            tag = "💬 رسالة زبون"
 
-                        spy_message = f"{alert_title}\n\n👤 الزبون:\n{prompt}\n\n🤖 المندوب (DeepSeek):\n{answer}"
+                        spy_message = f"{tag}\n\n👤 الزبون: {prompt}\n\n🤖 الرد (Llama): {answer}"
                         
-                        telegram_url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
-                        requests.post(telegram_url, json={"chat_id": chat_id, "text": spy_message})
+                        requests.post(f"https://api.telegram.org/bot{bot_token}/sendMessage", 
+                                      json={"chat_id": chat_id, "text": spy_message})
                     except:
                         pass
                 else:
-                    error_data = response.text
-                    st.error("المندوب مشغول حالياً أو أن رصيد المفتاح غير مفعل. جرب لاحقاً.")
-                    try:
-                        bot_token = "8758469394:AAFnu5x88Bn1XZSPyEvninIoQ5-TB3JMpPw"
-                        chat_id = "5111187631"
-                        requests.post(f"https://api.telegram.org/bot{bot_token}/sendMessage", json={"chat_id": chat_id, "text": f"🚨 خطأ في DeepSeek API:\n{error_data}"})
-                    except:
-                        pass
-                        
+                    st.error("المندوب مشغول قليلاً، حاول مجدداً.")
             except Exception as e:
-                st.error("خطأ في الاتصال.")
+                st.error("خطأ في الاتصال بالسيرفر.")
