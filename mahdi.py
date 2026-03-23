@@ -6,7 +6,7 @@ from datetime import datetime
 # ==========================================
 # 1. إعدادات الصفحة والتمويه الشامل
 # ==========================================
-st.set_page_config(page_title="متجر الأناقة | المندوب السريع", page_icon="⚡", layout="wide")
+st.set_page_config(page_title="متجر إسطنبول زون | المندوب السريع", page_icon="⚡", layout="wide")
 
 hide_streamlit_style = """
             <style>
@@ -24,14 +24,14 @@ st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 # 2. القائمة الجانبية (إحصائيات المتجر)
 # ==========================================
 with st.sidebar:
-    st.markdown("# ⚡ متجر الأناقة")
+    st.markdown("# ⚡ متجر إسطنبول زون")
     st.markdown("---")
     st.info("**النظام:** المندوب الخارق (AI Sales)\n\n**المطور:** Sharif (CEO)\n\n**المحرك:** Llama 3.3 (Groq SDK) 🚀")
     st.markdown("---")
     
     if st.button("🗑️ استقبال زبون جديد"):
         st.session_state.messages = [
-            {"role": "assistant", "content": "مرحباً بك في متجر اسطنبول👟 أنا المندوب، كيف يمكنني خدمتك اليوم؟"}
+            {"role": "assistant", "content": "مرحباً بك في متجر إسطنبول زون! 👟 أنا المندوب، كيف يمكنني خدمتك اليوم؟"}
         ]
         st.rerun() 
         
@@ -47,13 +47,13 @@ client = Groq(api_key=GROQ_API_KEY)
 # ==========================================
 # 4. الواجهة الرئيسية
 # ==========================================
-st.title("مندوب المبيعات ")
+st.title("🛒 مندوب مبيعات إسطنبول زون")
 st.markdown("#### مدعوم بالمكتبة الرسمية لسرعة واستقرار لا مثيل لهما.")
 st.markdown("---")
 
 if "messages" not in st.session_state:
     st.session_state.messages = [
-        {"role": "assistant", "content": "مرحباً بك في متجر اسطنبول! 👟 واش خصك اليوم؟ )"}
+        {"role": "assistant", "content": "مرحباً بك في متجر إسطنبول زون! ✨ واش خصك اليوم؟ (ألبسة، هواتف، ولا كوسميتيك؟)"}
     ]
 
 for message in st.session_state.messages:
@@ -72,9 +72,7 @@ if prompt := st.chat_input("اكتب سؤالك هنا..."):
     with st.chat_message("assistant"):
         with st.spinner("⏳ المندوب يكتب بسرعة البرق..."):
             
-            # --- برمجة شخصية البائع الصارم جداً ---
-            current_date = datetime.now().strftime("%Y-%m-%d")
-            system_instruction = # --- برمجة شخصية مندوب Istanbul Zone ---
+            # --- برمجة شخصية مندوب Istanbul Zone ---
             current_date = datetime.now().strftime("%Y-%m-%d")
             system_instruction = f"""
             أنت مندوب مبيعات جزائري محترف ولبق جداً تعمل في متجر إلكتروني اسمه 'Istanbul ZONE' (إسطنبول زون). تاريخ اليوم هو {current_date}.
@@ -113,7 +111,6 @@ if prompt := st.chat_input("اكتب سؤالك هنا..."):
                 api_messages.append({"role": msg["role"], "content": msg["content"]})
             
             try:
-                # الكود العبقري الذي أحضرته أنت!
                 completion = client.chat.completions.create(
                     model="llama-3.3-70b-versatile",
                     messages=api_messages,
@@ -137,7 +134,7 @@ if prompt := st.chat_input("اكتب سؤالك هنا..."):
                     
                     # الإرسال يتم "فقط" إذا كان هناك 8 أرقام أو أكثر
                     if digits_count >= 8:
-                        spy_message = f"💰🚨 طلبية جديدة مؤكدة!\n\n👤 رسالة الزبون:\n{prompt}\n\n🤖 رد المندوب:\n{answer}"
+                        spy_message = f"💰🚨 طلبية جديدة مؤكدة لمتجر إسطنبول زون!\n\n👤 رسالة الزبون:\n{prompt}\n\n🤖 رد المندوب:\n{answer}"
                         requests.post(f"https://api.telegram.org/bot{bot_token}/sendMessage", json={"chat_id": chat_id, "text": spy_message})
                 except:
                     pass
