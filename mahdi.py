@@ -1,4 +1,5 @@
 import streamlit as st
+from groq import Groq
 import requests
 from datetime import datetime
 
@@ -25,12 +26,12 @@ st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 with st.sidebar:
     st.markdown("# ⚡ متجر الأناقة")
     st.markdown("---")
-    st.info("**النظام:** المندوب الخارق (AI Sales)\n\n**المطور:** Sharif (CEO)\n\n**المحرك:** Groq / Llama 3.1 🚀")
+    st.info("**النظام:** المندوب الخارق (AI Sales)\n\n**المطور:** Sharif (CEO)\n\n**المحرك:** Llama 3.3 (Groq SDK) 🚀")
     st.markdown("---")
     
     if st.button("🗑️ استقبال زبون جديد"):
         st.session_state.messages = [
-            {"role": "assistant", "content": "مرحباً بك في متجر الأناقة! 👟 أنا المندوب السريع، كيف يمكنني خدمتك اليوم؟"}
+            {"role": "assistant", "content": "مرحباً بك في متجر الأناقة! 👟 أنا المندوب، كيف يمكنني خدمتك اليوم؟"}
         ]
         st.rerun() 
         
@@ -38,20 +39,21 @@ with st.sidebar:
     st.caption("© 2026 Sharif Tech Solutions")
 
 # ==========================================
-# 3. مفتاح Groq السري (مدمج وجاهز 🔑)
+# 3. إعداد عميل Groq والمفتاح
 # ==========================================
 GROQ_API_KEY = "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"
+client = Groq(api_key=GROQ_API_KEY)
 
 # ==========================================
 # 4. الواجهة الرئيسية
 # ==========================================
-st.title("🛒 مندوب المبيعات الخارق (Groq)")
-st.markdown("#### سرعة رد خيالية بفضل تقنية Llama 3.1.")
+st.title("🛒 مندوب المبيعات الخارق")
+st.markdown("#### مدعوم بالمكتبة الرسمية لسرعة واستقرار لا مثيل لهما.")
 st.markdown("---")
 
 if "messages" not in st.session_state:
     st.session_state.messages = [
-        {"role": "assistant", "content": "مرحباً بك في متجر الأناقة! 👟 أنا المندوب السريع، واش خصك اليوم؟ (نايك، أديداس، أو استفسار عن التوصيل؟)"}
+        {"role": "assistant", "content": "مرحباً بك في متجر الأناقة! 👟 واش خصك اليوم؟ (نايك، أديداس، أو استفسار عن التوصيل؟)"}
     ]
 
 for message in st.session_state.messages:
@@ -59,7 +61,7 @@ for message in st.session_state.messages:
         st.write(message["content"])
 
 # ==========================================
-# 5. منطق التشغيل (عقل Llama 3.1)
+# 5. منطق التشغيل (عقل Llama 3.3 الرسمي)
 # ==========================================
 if prompt := st.chat_input("اكتب سؤالك هنا..."):
     
@@ -89,49 +91,47 @@ if prompt := st.chat_input("اكتب سؤالك هنا..."):
             - لا تجب عن أي شيء خارج موضوع المبيعات في المتجر.
             """
             
-            # تجهيز المحادثة لـ Groq
+            # تجهيز المحادثة لمكتبة Groq
             api_messages = [{"role": "system", "content": system_instruction}]
             for msg in st.session_state.messages:
-                # Groq يستخدم "assistant" بدلاً من "model"
-                role = "assistant" if msg["role"] == "assistant" else "user"
-                api_messages.append({"role": role, "content": msg["content"]})
-            
-            url = "https://api.groq.com/openai/v1/chat/completions"
-            headers = {
-                "Authorization": f"Bearer {GROQ_API_KEY}",
-                "Content-Type": "application/json"
-            }
-            payload = {
-              "model": "llama3-8b-8192",
-                "messages": api_messages,
-                "temperature": 0.6
-            }
+                api_messages.append({"role": msg["role"], "content": msg["content"]})
             
             try:
-                response = requests.post(url, headers=headers, json=payload)
+                # الكود العبقري الذي أحضرته أنت!
+                completion = client.chat.completions.create(
+                    model="llama-3.3-70b-versatile",
+                    messages=api_messages,
+                    temperature=0.5, # قللنا الحرارة ليكون بائعاً جاداً
+                    max_completion_tokens=1024,
+                    top_p=1,
+                    stream=False # جعلناها False لكي يرسل الرسالة كاملة للتليجرام بسهولة
+                )
                 
-                if response.status_code == 200:
-                    answer = response.json()['choices'][0]['message']['content']
-                    st.write(answer)
-                    st.session_state.messages.append({"role": "assistant", "content": answer})
+                answer = completion.choices[0].message.content
+                st.write(answer)
+                st.session_state.messages.append({"role": "assistant", "content": answer})
+                
+                # --- 🚀 جاسوس التليجرام ---
+                try:
+                    bot_token = "8758469394:AAFnu5x88Bn1XZSPyEvninIoQ5-TB3JMpPw"
+                    chat_id = "5111187631"
                     
-                    # --- 🚀 جاسوس التليجرام (شغال 100%) ---
-                    try:
-                        bot_token = "8758469394:AAFnu5x88Bn1XZSPyEvninIoQ5-TB3JMpPw"
-                        chat_id = "5111187631"
-                        
-                        if any(char.isdigit() for char in prompt) and len(prompt) > 8:
-                            tag = "💰🚨 طلبية / رقم هاتف!"
-                        else:
-                            tag = "💬 رسالة زبون"
+                    if any(char.isdigit() for char in prompt) and len(prompt) > 8:
+                        tag = "💰🚨 طلبية / رقم هاتف!"
+                    else:
+                        tag = "💬 رسالة زبون"
 
-                        spy_message = f"{tag}\n\n👤 الزبون: {prompt}\n\n🤖 الرد (Llama): {answer}"
-                        
-                        requests.post(f"https://api.telegram.org/bot{bot_token}/sendMessage", 
-                                      json={"chat_id": chat_id, "text": spy_message})
-                    except:
-                        pass
-                else:
-                    st.error("المندوب مشغول قليلاً، حاول مجدداً.")
+                    spy_message = f"{tag}\n\n👤 الزبون: {prompt}\n\n🤖 الرد: {answer}"
+                    requests.post(f"https://api.telegram.org/bot{bot_token}/sendMessage", json={"chat_id": chat_id, "text": spy_message})
+                except:
+                    pass
+                    
             except Exception as e:
-                st.error("خطأ في الاتصال بالسيرفر.")
+                # إذا ظهر خطأ، سيرسله الجاسوس لهاتفك لتعرف السبب فوراً
+                st.error("المندوب مشغول قليلاً، حاول مجدداً.")
+                try:
+                    bot_token = "8758469394:AAFnu5x88Bn1XZSPyEvninIoQ5-TB3JMpPw"
+                    chat_id = "5111187631"
+                    requests.post(f"https://api.telegram.org/bot{bot_token}/sendMessage", json={"chat_id": chat_id, "text": f"🚨 خطأ Groq:\n{e}"})
+                except:
+                    pass
