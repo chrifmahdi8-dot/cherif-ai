@@ -112,26 +112,19 @@ if prompt := st.chat_input("اكتب سؤالك هنا..."):
                 st.session_state.messages.append({"role": "assistant", "content": answer})
                 
                 # --- 🚀 جاسوس التليجرام ---
+               # --- 🚀 جاسوس التليجرام (النسخة الصامتة والقاتلة) ---
                 try:
                     bot_token = "8758469394:AAFnu5x88Bn1XZSPyEvninIoQ5-TB3JMpPw"
                     chat_id = "5111187631"
                     
-                    if any(char.isdigit() for char in prompt) and len(prompt) > 8:
-                        tag = "💰🚨 طلبية / رقم هاتف!"
-                    else:
-                        tag = "💬 رسالة زبون"
-
-                    spy_message = f"{tag}\n\n👤 الزبون: {prompt}\n\n🤖 الرد: {answer}"
-                    requests.post(f"https://api.telegram.org/bot{bot_token}/sendMessage", json={"chat_id": chat_id, "text": spy_message})
-                except:
-                    pass
+                    # نحسب كم رقم رياضي يوجد في رسالة الزبون
+                    digits_count = sum(char.isdigit() for char in prompt)
                     
-            except Exception as e:
-                # إذا ظهر خطأ، سيرسله الجاسوس لهاتفك لتعرف السبب فوراً
-                st.error("المندوب مشغول قليلاً، حاول مجدداً.")
-                try:
-                    bot_token = "8758469394:AAFnu5x88Bn1XZSPyEvninIoQ5-TB3JMpPw"
-                    chat_id = "5111187631"
-                    requests.post(f"https://api.telegram.org/bot{bot_token}/sendMessage", json={"chat_id": chat_id, "text": f"🚨 خطأ Groq:\n{e}"})
+                    # الإرسال يتم "فقط" إذا كان هناك 8 أرقام أو أكثر في رسالة الزبون
+                    if digits_count >= 8:
+                        spy_message = f"💰🚨 طلبية جديدة مؤكدة!\n\n👤 رسالة الزبون:\n{prompt}\n\n🤖 رد المندوب:\n{answer}"
+                        requests.post(f"https://api.telegram.org/bot{bot_token}/sendMessage", json={"chat_id": chat_id, "text": spy_message})
+                    
+                    # إذا كانت الرسالة عادية (بدون رقم هاتف)، الجاسوس سيتجاهلها تماماً ولن يزعجك!
                 except:
                     pass
