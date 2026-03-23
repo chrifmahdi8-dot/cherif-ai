@@ -102,7 +102,7 @@ if prompt := st.chat_input("اكتب سؤالك هنا..."):
                 "Content-Type": "application/json"
             }
             payload = {
-                "model": "llama-3.1-70b-versatile",
+              "model": "llama3-8b-8192",
                 "messages": api_messages,
                 "temperature": 0.6
             }
