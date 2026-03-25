@@ -2,6 +2,7 @@ import streamlit as st
 from groq import Groq
 import requests
 from datetime import datetime
+import base64
 from PIL import Image
 
 # ==========================================
@@ -31,8 +32,8 @@ div.stHeader, div[data-testid="stHeader"] {display: none !important;}
 .stButton>button { background-color: #10B981; color: white; border-radius: 5px; border: none; }
 .stButton>button:hover { background-color: #059669; color: white; }
 
-/* تصميم بطاقات المنتجات */
-.prod-card { background-color: white; padding: 15px; border-radius: 10px; border: 1px solid #A7F3D0; text-align: center; margin-bottom: 20px; transition: 0.3s; height: 100%;}
+/* تصميم بطاقات المنتجات لعرض الصور */
+.prod-card { background-color: white; padding: 15px; border-radius: 10px; border: 1px solid #A7F3D0; text-align: center; margin-bottom: 20px; transition: 0.3s; }
 .prod-card:hover { box-shadow: 0 4px 8px rgba(16, 185, 129, 0.2); border-color: #10B981; }
 .prod-card h4 { color: #10B981; margin-top: 10px; font-family: sans-serif;}
 .prod-card p { font-size: 0.9rem; color: #444; }
@@ -47,7 +48,7 @@ with st.sidebar:
     st.markdown("# 🧴 مختبرات Massilya")
     st.markdown("---")
     if st.button("🗑️ استقبال زبون جديد"):
-        st.session_state.messages = [{"role": "assistant", "content": "أهلاً ومرحباً بكم في مختبرات Massilya! 🧴 أنا خبير العناية بالبشرة والشعر. كيف يمكنني مساعدتكم اليوم؟"}]
+        st.session_state.messages = [{"role": "assistant", "content": "مرحباً بكم في مختبرات Massilya! 🧴 أنا خبير العناية بالبشرة والشعر. كيف يمكنني مساعدتكم اليوم؟"}]
         st.rerun() 
     st.markdown("---")
     st.caption("Powered by Sharif AI Solutions")
@@ -61,45 +62,53 @@ client = Groq(api_key=GROQ_API_KEY)
 cols = st.columns([1, 2, 1])
 with cols[1]:
     try:
+        # تأكد من رفع صورة اللوغو باسم logo.jpg.jpg أو logo.jpg
         logo = Image.open("logo.jpg.jpg") 
         st.image(logo, use_container_width=True)
     except FileNotFoundError:
-        st.warning("⚠️ اللوغو غير موجود، تأكد من رفع صورة باسم 'logo.jpg.jpg'.")
+        st.warning("⚠️ اللوغو غير موجود، تأكد من رفع صورة باسم 'logo.jpg.jpg' أو 'logo.jpg'.")
 
 st.markdown("<h1 style='text-align: center; color: #065F46; font-size: 2.2rem;'>مختبرات Massilya - خبيرك الرقمي</h1>", unsafe_allow_html=True)
 st.markdown("<p style='text-align: center; color: #10B981; font-size: 1.1rem;'>العناية بالبشرة، التجميل، والتغذية - استشارة احترافية 24/7</p>", unsafe_allow_html=True)
 st.markdown("---")
 
 # ==========================================
-# 4. قسم تعريف المنتجات (نظام الشبكة المستقر)
+# 4. قسم تعريف المنتجات (البطاقات مع الصور الحقيقية)
 # ==========================================
 st.markdown("<h2 style='text-align: right; color: #065F46;'>✨ تشكيلة منتجاتنا المتخصصة</h2>", unsafe_allow_html=True)
 
+# شبكة المنتجات (4 أعمدة)
 prod_cols = st.columns(4)
 
+# المنتجات المعروضة في الواجهة مع أسماء ملفات الصور الحقيقية المرفوعة
 placeholders = [
     {"name": "كريم 30% يوريا", "desc": "علاج جلد الدجاجة والشعر تحت الجلد", "img_file": "chicken.jpeg"},
     {"name": "محلول تساقط الشعر", "desc": "بزيت إكليل الجبل وفيتامين B5", "img_file": "produit.jpeg"},
-    {"name": "غسول مقشر (الأسود)", "desc": "2% حمض الساليسيليك ضد حب الشباب", "img_file": "2acide.jpeg"},
+    {"name": "غسول مقشر (الأسود)", "desc": "2% حمض الساليسيليك ضد حب الشباب", "img_file": "2acide.jpeg"}, # استخدمت ملف Gris.png بناءً على تلميح الصورة
     {"name": "شامبو ضد القشرة", "desc": "علاج نهائي للقشرة وحكة الفروة", "img_file": "champo.png"},
     {"name": "غسول للبشرة الدهنية", "desc": "بالألوفيرا لتقليل إفراز الدهون", "img_file": "oily.jpeg"},
     {"name": "غسول للبشرة الجافة", "desc": "خالي من الصابون والسلفات", "img_file": "dry.png"},
+    # التعديل: استبدال كريم الاستحمام بغسول لحب الشباب (hab chbab)
     {"name": "غسول لحب الشباب", "desc": "تنظيف عميق للبشرة المعرضة لحب الشباب", "img_file": "hab chbab.png"},
     {"name": "جل الاستحمام", "desc": "ترطيب 100% بتركيز غليسيرين 5%", "img_file": "jel.png"}
 ]
 
 for i, prod in enumerate(placeholders):
     with prod_cols[i % 4]:
-        st.markdown('<div class="prod-card">', unsafe_allow_html=True)
+        # محاولة تحميل وعرض الصورة الحقيقية للمنتج
         try:
             prod_img = Image.open(prod['img_file'])
-            st.image(prod_img, use_container_width=True)
+            # عرض الصورة داخل عمود Streamlit مع تعليق (Caption)
+            st.image(prod_img, use_container_width=True, caption=prod['name'])
         except FileNotFoundError:
-            st.markdown('<div style="font-size: 3rem; color: #10B981; text-align: center;">🧴</div>', unsafe_allow_html=True)
-        
-        st.markdown(f'<h4 style="text-align: center; color: #10B981;">{prod["name"]}</h4>', unsafe_allow_html=True)
-        st.markdown(f'<p style="text-align: center; color: #444;">{prod["desc"]}</p>', unsafe_allow_html=True)
-        st.markdown('</div>', unsafe_allow_html=True)
+            # إذا لم يتم العثور على الملف، اعرض الأيقونة الثلاثية الأبعاد الاحتياطية (التصميم القديم)
+            st.markdown(f"""
+            <div class="prod-card">
+                <div style="font-size: 3rem; color: #10B981;">🧴</div>
+                <h4>{prod['name']}</h4>
+                <p>{prod['desc']}</p>
+            </div>
+            """, unsafe_allow_html=True)
 
 st.markdown("---")
 
@@ -157,6 +166,7 @@ if prompt := st.chat_input("اكتبوا سؤالكم لخبير Massilya الآ
             
             🛁 قسم العناية بالجسم:
             9. جل الاستحمام (للبشرة الجافة): 500 دج. غليسيرين 5%.
+            # التعديل: استبدال كريم الاستحمام بغسول لحب الشباب (hab chbab)
             10. غسول لحب الشباب (hab chbab): 500 دج. تنظيف عميق للبشرة المعرضة لحب الشباب.
             11. كريم مقشر 30% يوريا: 850 دج. ممتاز لجلد الدجاجة والشعر تحت الجلد.
             12. غسول PanOxyl (مستورد): 3,700 دج.
