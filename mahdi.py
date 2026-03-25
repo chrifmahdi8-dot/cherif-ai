@@ -5,7 +5,6 @@ import requests
 from datetime import datetime
 import base64
 import os
-from PIL import Image
 
 # ==========================================
 # 1. إعدادات الصفحة الفاخرة والتمويه
@@ -17,7 +16,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# دالة تشفير الصور لتعمل داخل السلايدر المعزول
+# دالة تشفير الصور لتعمل داخل السلايدر المعزول والشريط الثابت
 def get_image_base64(img_path):
     if os.path.exists(img_path):
         with open(img_path, "rb") as img_file:
@@ -60,18 +59,56 @@ GROQ_API_KEY = "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"
 client = Groq(api_key=GROQ_API_KEY)
 
 # ==========================================
-# 3. الواجهة (اللوغو والترويسة)
+# 3. الواجهة (الشريط العلوي الثابت - Sticky Header)
 # ==========================================
-cols = st.columns([1, 2, 1])
-with cols[1]:
-    try:
-        logo = Image.open("logo.jpg.jpg") 
-        st.image(logo, use_container_width=True)
-    except FileNotFoundError:
-        st.warning("⚠️ اللوغو غير موجود، تأكد من رفع صورة باسم 'logo.jpg.jpg'.")
+logo_b64 = get_image_base64("logo.jpg.jpg") 
 
-st.markdown("<h1 style='text-align: center; color: #065F46; font-size: 2.2rem;'>مختبرات Massilya - خبيرك الرقمي</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center; color: #10B981; font-size: 1.1rem;'>العناية بالبشرة، التجميل، والتغذية - استشارة احترافية 24/7</p>", unsafe_allow_html=True)
+if logo_b64:
+    header_html = f"""
+    <style>
+    /* تصميم الشريط العلوي الثابت */
+    .sticky-header {{
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        background-color: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(5px);
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        z-index: 99999;
+        display: flex;
+        align-items: center;
+        padding: 10px 20px;
+        direction: rtl;
+    }}
+    .header-logo {{
+        height: 45px;
+        margin-left: 15px;
+        border-radius: 5px;
+    }}
+    .header-title {{
+        color: #065F46;
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin: 0;
+        font-family: 'Cairo', sans-serif;
+    }}
+    /* إزاحة المحتوى للأسفل لكي لا يغطيه الشريط الثابت */
+    .block-container {{
+        padding-top: 80px !important; 
+    }}
+    </style>
+
+    <div class="sticky-header">
+        <img src="data:image/jpeg;base64,{logo_b64}" class="header-logo" alt="Massilya Logo">
+        <p class="header-title">مختبرات Massilya</p>
+    </div>
+    """
+    st.markdown(header_html, unsafe_allow_html=True)
+else:
+    st.warning("⚠️ اللوغو غير موجود، تأكد من رفع صورة باسم 'logo.jpg.jpg'.")
+
+st.markdown("<h3 style='text-align: center; color: #10B981; margin-top: 10px;'>استشارة احترافية 24/7</h3>", unsafe_allow_html=True)
 st.markdown("---")
 
 # ==========================================
@@ -205,6 +242,7 @@ if prompt := st.chat_input("اكتبوا سؤالكم لخبير Massilya الآ
             3. إجاباتك يجب أن تكون قصيرة، مباشرة، وتركز على حل مشكلة الزبون.
             4. هدفك النهائي: تشخيص المشكلة بناءً على رسالة الزبون، اقتراح المنتج المناسب، وأخذ (الاسم، الولاية، ورقم الهاتف) لتأكيد الطلب. 
             5. تكلفة التوصيل: العاصمة 400 دج، وباقي ولايات الجزائر 600 دج.
+            6. [تنبيه حاسم جداً]: كلمة "غسول" تُطلق حصرياً على منتجات الوجه. أما كلمة "جل استحمام" فتُطلق حصرياً على منتجات تنظيف الجسم. لا تخلط بينهما أبداً عند نصح الزبون.
             
             [أمثلة لطريقة الرد]:
             - الزبون: أعاني من حب الشباب في وجهي.
