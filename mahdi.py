@@ -6,6 +6,7 @@ import requests
 from datetime import datetime
 import base64
 import os
+import re
 
 # ==========================================
 # 1. إعدادات الصفحة الفاخرة والتمويه
@@ -17,7 +18,6 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# دالة تشفير الصور لتعمل داخل السلايدر المعزول والشريط الثابت
 def get_image_base64(img_path):
     if os.path.exists(img_path):
         with open(img_path, "rb") as img_file:
@@ -25,45 +25,28 @@ def get_image_base64(img_path):
     return None
 
 # ==========================================
-# 🚨 إخفاء Streamlit + إصلاح اتجاه النص العربي/الفرنسي
+# 🚨 إخفاء Streamlit + إصلاح اتجاه النص
 # ==========================================
 hide_streamlit_style = """
 <style>
-/* 1. إخفاء الهيدر والفوتر الأساسيين */
 header[data-testid="stHeader"] {display: none !important;}
 footer {display: none !important;}
 #MainMenu {visibility: hidden !important;}
-
-/* 2. الخيار النووي: إخفاء أي زر "نشر" أو شريط أدوات */
 .stDeployButton {display: none !important;}
 [data-testid="stAppDeployButton"] {display: none !important;}
 [data-testid="stToolbar"] {display: none !important;}
 div[data-testid="stToolbar"] {display: none !important;}
-
-/* 3. استهداف العلامة المائية واللوغو الخاص بهم في الهاتف */
 a[href^="https://streamlit.io"] {display: none !important;}
 img[src*="streamlit"] {display: none !important;}
 svg[title*="Streamlit"] {display: none !important;}
-
-/* 4. إخفاء أي أزرار عائمة تظهر في الهواتف */
 button[kind="header"] {display: none !important;}
 .stActionButton {display: none !important;}
 div[class*="stActionButton"] {display: none !important;}
 
-/* ========================================== */
-/* تصميمات المحادثة وإصلاح تداخل اللغات (RTL/LTR) */
-/* ========================================== */
-[data-testid="stChatMessageContent"] { 
-    direction: rtl !important; 
-    text-align: right !important; 
-    line-height: 1.6 !important;
-}
+/* تصميمات المحادثة وإصلاح تداخل اللغات */
+[data-testid="stChatMessageContent"] { direction: rtl !important; text-align: right !important; line-height: 1.6 !important;}
 [data-testid="stChatMessageAvatarAssistant"] { background-color: #10B981; }
-[data-testid="stChatMessageAssistant"] { 
-    background-color: #F0FDF4; 
-    border-radius: 10px; 
-    padding: 10px; 
-}
+[data-testid="stChatMessageAssistant"] { background-color: #F0FDF4; border-radius: 10px; padding: 10px; }
 .stButton>button { background-color: #10B981; color: white; border-radius: 5px; border: none; }
 .stButton>button:hover { background-color: #059669; color: white; }
 </style>
@@ -71,7 +54,7 @@ div[class*="stActionButton"] {display: none !important;}
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
 # ==========================================
-# 2. إعداد المفاتيح السرية (من سيرفر Render)
+# 2. إعداد المفاتيح السرية
 # ==========================================
 try:
     GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
@@ -95,7 +78,7 @@ with st.sidebar:
     st.caption("Powered by Sharif AI Solutions")
 
 # ==========================================
-# 4. الواجهة (الشريط العلوي الثابت - Sticky Header)
+# 4. الواجهة العلوية
 # ==========================================
 logo_b64 = get_image_base64("logo.jpg.jpg") 
 
@@ -117,14 +100,12 @@ if logo_b64:
     </div>
     """
     st.markdown(header_html, unsafe_allow_html=True)
-else:
-    st.warning("⚠️ اللوغو غير موجود، تأكد من رفع صورة باسم 'logo.jpg.jpg' في GitHub.")
 
 st.markdown("<h3 style='text-align: center; color: #10B981; margin-top: 10px;'>استشارة طبية وتجميلية 24/7</h3>", unsafe_allow_html=True)
 st.markdown("---")
 
 # ==========================================
-# 5. قسم تعريف المنتجات (السلايدر المعزول الآمن)
+# 5. السلايدر
 # ==========================================
 st.markdown("<h2 style='text-align: right; color: #065F46;'>✨ تشكيلة منتجاتنا المتخصصة</h2>", unsafe_allow_html=True)
 st.markdown("<p style='text-align: right; color: #666;'>👈 اسحب لليمين واليسار لتصفح المنتجات</p>", unsafe_allow_html=True)
@@ -132,12 +113,12 @@ st.markdown("<p style='text-align: right; color: #666;'>👈 اسحب لليمي
 placeholders = [
     {"name": "Crème 30% Urée", "desc": "علاج فعال لجلد الدجاجة والخشونة", "img_file": "chicken.jpeg"},
     {"name": "Lotion Anti-Chute", "desc": "محلول مكثف لعلاج تساقط الشعر", "img_file": "produit.jpeg"},
-    {"name": "Gel Exfoliant 2% BHA", "desc": "مقشر قوي لحب الشباب (الأسود)", "img_file": "2acide.jpeg"},
-    {"name": "Shampooing Anti-Pelliculaire", "desc": "علاج نهائي للقشرة وحكة الفروة", "img_file": "champo.png"},
+    {"name": "Gel Exfoliant 2% BHA", "desc": "مقشر قوي لحب الشباب", "img_file": "2acide.jpeg"},
+    {"name": "Shampooing Anti-Pelliculaire", "desc": "علاج نهائي للقشرة", "img_file": "champo.png"},
     {"name": "Gel Nettoyant Purifiant", "desc": "منظف عميق للبشرة الدهنية", "img_file": "oily.jpeg"},
     {"name": "Gel Ultra Doux", "desc": "عناية فائقة للبشرة الجافة والحساسة", "img_file": "dry.png"},
-    {"name": "Gel Peaux Acnéiques", "desc": "عناية يومية للبشرة المعرضة للحبوب", "img_file": "hab chbab.png"},
-    {"name": "Crème de Douche", "desc": "كريم استحمام لترطيب الجسم", "img_file": "jel.png"}
+    {"name": "Gel Peaux Acnéiques", "desc": "للبشرة المعرضة للحبوب", "img_file": "hab chbab.png"},
+    {"name": "Crème de Douche", "desc": "كريم استحمام للترطيب", "img_file": "jel.png"}
 ]
 
 html_code = """
@@ -147,36 +128,26 @@ html_code = """
     .slider-container::-webkit-scrollbar { height: 8px; }
     .slider-container::-webkit-scrollbar-thumb { background-color: #10B981; border-radius: 10px; }
     .slider-card { flex: 0 0 240px; scroll-snap-align: start; background-color: white; padding: 15px; border-radius: 15px; border: 2px solid #A7F3D0; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: transform 0.3s; }
-    .slider-card:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(16, 185, 129, 0.2); border-color: #10B981; }
     .slider-img { width: 100%; height: 180px; object-fit: contain; border-radius: 10px; margin-bottom: 10px; }
     h4 { color: #10B981; margin: 10px 0 5px 0; font-size: 1.1rem; }
-    p { font-size: 0.85rem; color: #444; margin: 0; line-height: 1.4; }
+    p { font-size: 0.85rem; color: #444; margin: 0; }
 </style></head><body><div class="slider-container" dir="rtl">
 """
-
 for prod in placeholders:
     img_b64 = get_image_base64(prod['img_file'])
-    if img_b64:
-        ext = prod['img_file'].split('.')[-1].lower()
-        mime_type = "image/jpeg" if ext in ["jpg", "jpeg"] else "image/png"
-        img_src = f"data:{mime_type};base64,{img_b64}"
-    else:
-        img_src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+    img_src = f"data:image/jpeg;base64,{img_b64}" if img_b64 else "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
     html_code += f'<div class="slider-card"><img src="{img_src}" class="slider-img"><h4>{prod["name"]}</h4><p>{prod["desc"]}</p></div>'
-
 html_code += "</div></body></html>"
 components.html(html_code, height=360, scrolling=False)
 st.markdown("---")
 
 # ==========================================
-# 6. المندوب الذكي المزدوج
+# 6. المندوب الذكي المزدوج (مع فلتر التنظيف الصارم)
 # ==========================================
 st.markdown("<h2 style='text-align: right; color: #065F46;'>💬 استشارة العناية بالبشرة</h2>", unsafe_allow_html=True)
 
 if "messages" not in st.session_state:
-    st.session_state.messages = [
-        {"role": "assistant", "content": "أهلاً ومرحباً بكم في مختبرات Massilya! 🧴 أنا طبيب وخبير العناية بالبشرة والشعر. كيف يمكنني مساعدتكم اليوم؟"}
-    ]
+    st.session_state.messages = [{"role": "assistant", "content": "أهلاً ومرحباً بكم في مختبرات Massilya! 🧴 أنا طبيب وخبير العناية بالبشرة والشعر. كيف يمكنني مساعدتكم اليوم؟"}]
 
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
@@ -194,33 +165,27 @@ if prompt := st.chat_input("اكتبوا سؤالكم لخبير Massilya الآ
             current_date = datetime.now().strftime("%Y-%m-%d")
             system_instruction = f"""
             أنت طبيب أمراض جلدية وخبير مبيعات محترف تعمل في مختبرات 'Massilya Dermo-Cosmétiques' في الجزائر. 
-            تاريخ اليوم هو {current_date}.
             
-            [قواعد التحدث الإجبارية 🚨]: 
-            1. تحدث باللغة العربية الفصحى المبسطة، الواضحة، والمهنية جداً.
-            2. كن لبقاً مثل طبيب حقيقي يرحب بمرضاه.
-            3. [طول الإجابة والمحتوى]: إجاباتك يجب أن تكون متوسطة الطول. اشرح فوائد المنتج بأسلوب طبي مقنع وجذاب.
-            4. [تنسيق اللغات - صارم جداً ⚠️]: عندما تذكر اسم المنتج باللغة الفرنسية، يجب عليك إجبارياً وضعه بين قوسين ( ) أو علامتي تنصيص " " لكي لا يتداخل مع النص العربي.
-            5. [منع الهلوسة 🛑]: يمنع منعاً باتاً استخدام أي حروف لغات أخرى (مثل الحروف الصينية أو غيرها). استخدم فقط العربية للحديث، والفرنسية لكتابة اسم المنتج بين قوسين.
-            6. هدفك النهائي: تشخيص المشكلة، اقتراح المنتج الأنسب، وأخذ (الاسم، الولاية، ورقم الهاتف) لتأكيد الطلب. 
-            7. تكلفة التوصيل: العاصمة 400 دج، وباقي الولايات 600 دج.
+            [تحذير أمني صارم 🛑]: 
+            يُمنع منعاً باتاً طباعة أي حروف آسيوية (صينية، كورية، يابانية) أو رموز غريبة. استخدم فقط الحروف العربية الفصحى، والحروف اللاتينية لأسماء المنتجات.
+            أي خرق لهذه القاعدة سيعتبر فشلاً ذريعاً.
             
-            [الكتالوج الرسمي لمنتجات Massilya المتوفرة]:
+            [قواعد التحدث]: 
+            1. تحدث بالعربية الفصحى المبسطة.
+            2. ضع اسم المنتج بالفرنسية بين قوسين ( ).
+            3. اطلب في النهاية (الاسم، الولاية، رقم الهاتف) لتأكيد الطلب.
+            4. التوصيل: العاصمة 400 دج، باقي الولايات 600 دج.
             
-            🧴 قسم العناية بالوجه:
+            [الكتالوج]:
             1. (MASSILYA Gel Exfoliant Moussant 2% BHA 200ml) - السعر: 950 د.ج
             2. (MASSILYA Gel Nettoyant Purifiant Peaux Grasses 250ml) - السعر: 500 د.ج
             3. (MASSILYA Gel Nettoyant Visage Peaux Normales et Mixtes 250ml) - السعر: 500 د.ج
             4. (MASSILYA Gel Nettoyant Visage Ultra Doux 250ml) - السعر: 500 د.ج
             5. (MASSILYA Gel Moussant Pour Peaux Acnéiques 250ml) - السعر: 500 د.ج
-            
-            💆‍♀️ قسم العناية بالشعر:
             6. (MASSILYA Lotion Anti Chute 150ml) - السعر: 1100 د.ج
             7. (MASSILYA Shampooing Anti-Pelliculaire 200ml) - السعر: 750 د.ج
             8. (MASSILYA Shampoing Cheveux Secs et Abimés 200ml) - السعر: 800 د.ج
             9. (MASSILYA Shampooing Anti Pelliculaire PSO F 200ml) - السعر: 780 د.ج
-            
-            🛁 قسم العناية بالجسم:
             10. (MASSILYA Crème Anti-Rugosité 30% Urée 120ml) - السعر: 850 د.ج
             11. (MASSILYA Lait Hydratant Emollient 5% Visage et Corps) - السعر: 850 د.ج
             12. (MASSILYA Lait Hydratant Emollient 10% Corps) - السعر: 1050 د.ج
@@ -234,12 +199,13 @@ if prompt := st.chat_input("اكتبوا سؤالكم لخبير Massilya الآ
                 for msg in st.session_state.messages:
                     api_messages.append({"role": msg["role"], "content": msg["content"]})
                 
+                # تخفيض درجة الإبداع إلى 0.1 لمنع الهلوسة تماماً
                 completion = groq_client.chat.completions.create(
                     model="llama-3.3-70b-versatile",
                     messages=api_messages,
-                    temperature=0.3, 
+                    temperature=0.1, 
                     max_completion_tokens=1024,
-                    top_p=1,
+                    top_p=0.9,
                     stream=False 
                 )
                 answer = completion.choices[0].message.content
@@ -258,19 +224,19 @@ if prompt := st.chat_input("اكتبوا سؤالكم لخبير Massilya الآ
                 except Exception as gemini_error:
                     answer = "عذراً، الأطباء في المختبر مشغولون حالياً باستشارات أخرى. يرجى المحاولة بعد قليل! ⏳"
 
+            # 🧹 الجدار الناري: مسح أي حروف آسيوية قبل طباعتها
+            # هذا الكود يمسح الرموز الكورية والصينية واليابانية إن وجدت
+            answer = re.sub(r'[\u4e00-\u9fff\u3040-\u309f\u30a0-\u30ff\uac00-\ud7af]', '', answer)
+
             st.write(answer)
             st.session_state.messages.append({"role": "assistant", "content": answer})
             
-            # ==========================================
             # 7. جاسوس التليجرام
-            # ==========================================
             try:
                 bot_token = "8758469394:AAFnu5x88Bn1XZSPyEvninIoQ5-TB3JMpPw"
                 chat_id = "5111187631"
-                digits_count = sum(char.isdigit() for char in prompt)
-                
-                if digits_count >= 8:
-                    spy_message = f"💰🚨 طلبية جديدة لمختبرات Massilya!\n\n👤 رسالة الزبون:\n{prompt}\n\n🤖 تشخيص المندوب:\n{answer}"
+                if sum(char.isdigit() for char in prompt) >= 8:
+                    spy_message = f"💰🚨 طلبية جديدة!\n\n👤 الزبون:\n{prompt}\n\n🤖 المندوب:\n{answer}"
                     requests.post(f"https://api.telegram.org/bot{bot_token}/sendMessage", json={"chat_id": chat_id, "text": spy_message})
             except:
                 pass
