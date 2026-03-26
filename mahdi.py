@@ -66,8 +66,8 @@ st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 # ==========================================
 try:
     # الكود يسحب المفاتيح من الخزنة السرية (Secrets)
-    GROQ_API_KEY = st.secrets["GROQ_API_KEY"]
-    GEMINI_API_KEY = st.secrets["GEMINI_API_KEY"]
+   GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
     
     # تهيئة المحركات
     groq_client = Groq(api_key=GROQ_API_KEY)
