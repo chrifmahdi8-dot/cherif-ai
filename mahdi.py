@@ -48,7 +48,7 @@ st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 # 2. إعداد المفاتيح السرية (نظام محمي ومزدوج)
 # ==========================================
 try:
-    # الكود الآن يسحب المفاتيح من الخزنة السرية (Secrets) ولن تكون مكشوفة
+    # الكود الآن يسحب المفاتيح من الخزنة السرية (Secrets)
     GROQ_API_KEY = st.secrets["GROQ_API_KEY"]
     GEMINI_API_KEY = st.secrets["GEMINI_API_KEY"]
     
@@ -66,7 +66,7 @@ with st.sidebar:
     st.markdown("# 🧴 مختبرات Massilya")
     st.markdown("---")
     if st.button("🗑️ استقبال زبون جديد"):
-        st.session_state.messages = [{"role": "assistant", "content": "أهلاً ومرحباً بكم في مختبرات Massilya! 🧴 أنا خبير العناية بالبشرة والشعر. كيف يمكنني مساعدتكم اليوم؟"}]
+        st.session_state.messages = [{"role": "assistant", "content": "أهلاً ومرحباً بكم في مختبرات Massilya! 🧴 أنا طبيب وخبير العناية بالبشرة والشعر. كيف يمكنني مساعدتكم اليوم؟"}]
         st.rerun() 
     st.markdown("---")
     st.caption("Powered by Sharif AI Solutions")
@@ -121,7 +121,7 @@ if logo_b64:
 else:
     st.warning("⚠️ اللوغو غير موجود، تأكد من رفع صورة باسم 'logo.jpg.jpg'.")
 
-st.markdown("<h3 style='text-align: center; color: #10B981; margin-top: 10px;'>استشارة احترافية 24/7</h3>", unsafe_allow_html=True)
+st.markdown("<h3 style='text-align: center; color: #10B981; margin-top: 10px;'>استشارة طبية وتجميلية 24/7</h3>", unsafe_allow_html=True)
 st.markdown("---")
 
 # ==========================================
@@ -130,15 +130,16 @@ st.markdown("---")
 st.markdown("<h2 style='text-align: right; color: #065F46;'>✨ تشكيلة منتجاتنا المتخصصة</h2>", unsafe_allow_html=True)
 st.markdown("<p style='text-align: right; color: #666;'>👈 اسحب لليمين واليسار لتصفح المنتجات</p>", unsafe_allow_html=True)
 
+# تم التعديل لتشمل الأسماء الاحترافية الجديدة
 placeholders = [
-    {"name": "كريم 30% يوريا", "desc": "علاج جلد الدجاجة والشعر تحت الجلد", "img_file": "chicken.jpeg"},
-    {"name": "محلول تساقط الشعر", "desc": "بزيت إكليل الجبل وفيتامين B5", "img_file": "produit.jpeg"},
-    {"name": "غسول مقشر (الأسود)", "desc": "2% حمض الساليسيليك ضد حب الشباب", "img_file": "2acide.jpeg"},
-    {"name": "شامبو ضد القشرة", "desc": "علاج نهائي للقشرة وحكة الفروة", "img_file": "champo.png"},
-    {"name": "غسول للبشرة الدهنية", "desc": "بالألوفيرا لتقليل إفراز الدهون", "img_file": "oily.jpeg"},
-    {"name": "غسول للبشرة الجافة", "desc": "خالي من الصابون والسلفات", "img_file": "dry.png"},
-    {"name": "غسول لحب الشباب", "desc": "تنظيف عميق للبشرة المعرضة لحب الشباب", "img_file": "hab chbab.png"},
-    {"name": "جل الاستحمام", "desc": "ترطيب 100% بتركيز غليسيرين 5%", "img_file": "jel.png"}
+    {"name": "Crème 30% Urée", "desc": "علاج فعال لجلد الدجاجة والخشونة", "img_file": "chicken.jpeg"},
+    {"name": "Lotion Anti-Chute", "desc": "محلول مكثف لعلاج تساقط الشعر", "img_file": "produit.jpeg"},
+    {"name": "Gel Exfoliant 2% BHA", "desc": "مقشر قوي لحب الشباب (الأسود)", "img_file": "2acide.jpeg"},
+    {"name": "Shampooing Anti-Pelliculaire", "desc": "علاج نهائي للقشرة وحكة الفروة", "img_file": "champo.png"},
+    {"name": "Gel Nettoyant Purifiant", "desc": "منظف عميق للبشرة الدهنية", "img_file": "oily.jpeg"},
+    {"name": "Gel Ultra Doux", "desc": "عناية فائقة للبشرة الجافة والحساسة", "img_file": "dry.png"},
+    {"name": "Gel Peaux Acnéiques", "desc": "عناية يومية للبشرة المعرضة للحبوب", "img_file": "hab chbab.png"},
+    {"name": "Crème de Douche", "desc": "كريم استحمام لترطيب الجسم", "img_file": "jel.png"}
 ]
 
 # كود HTML المعزول (Iframe)
@@ -228,7 +229,7 @@ st.markdown("<h2 style='text-align: right; color: #065F46;'>💬 استشارة 
 
 if "messages" not in st.session_state:
     st.session_state.messages = [
-        {"role": "assistant", "content": "أهلاً ومرحباً بكم في مختبرات Massilya! 🧴 أنا خبير العناية بالبشرة والشعر. كيف يمكنني مساعدتكم اليوم؟"}
+        {"role": "assistant", "content": "أهلاً ومرحباً بكم في مختبرات Massilya! 🧴 أنا طبيب وخبير العناية بالبشرة والشعر. كيف يمكنني مساعدتكم اليوم؟"}
     ]
 
 for message in st.session_state.messages:
@@ -242,39 +243,43 @@ if prompt := st.chat_input("اكتبوا سؤالكم لخبير Massilya الآ
         st.write(prompt)
 
     with st.chat_message("assistant"):
-        with st.spinner("⏳ الخبير يحلل نوع بشرتك..."):
+        with st.spinner("⏳ الخبير يحلل الحالة ويقوم بتحضير الوصفة..."):
             
-            # --- برمجة شخصية مندوب Massilya (الفصحى الاحترافية) ---
+            # --- برمجة شخصية مندوب Massilya (تحديث الكتالوج الفعلي) ---
             current_date = datetime.now().strftime("%Y-%m-%d")
             system_instruction = f"""
-            أنت خبير مبيعات وطبيب أمراض جلدية تعمل في مختبرات 'Massilya Dermo-Cosmétiques' في الجزائر. تاريخ اليوم هو {current_date}.
+            أنت طبيب أمراض جلدية وخبير مبيعات محترف تعمل في مختبرات 'Massilya Dermo-Cosmétiques' في الجزائر. 
+            تاريخ اليوم هو {current_date}.
             
             [قواعد التحدث الإجبارية 🚨]: 
             1. تحدث باللغة العربية الفصحى المبسطة، الواضحة، والمهنية جداً.
-            2. كن لبقاً مثل طبيب حقيقي يرحب بمرضاه (مثال: أهلاً بك يا سيدتي، يسعدني مساعدتك، أنصحك بـ...).
-            3. إجاباتك يجب أن تكون قصيرة، مباشرة، وتركز على حل مشكلة الزبون.
-            4. هدفك النهائي: تشخيص المشكلة بناءً على رسالة الزبون، اقتراح المنتج المناسب، وأخذ (الاسم، الولاية، ورقم الهاتف) لتأكيد الطلب. 
-            5. تكلفة التوصيل: العاصمة 400 دج، وباقي ولايات الجزائر 600 دج.
-            6. [تنبيه حاسم جداً]: كلمة "غسول" تُطلق حصرياً على منتجات الوجه. أما كلمة "جل استحمام" فتُطلق حصرياً على منتجات تنظيف الجسم. لا تخلط بينهما أبداً عند نصح الزبون.
+            2. كن لبقاً مثل طبيب حقيقي يرحب بمرضاه (مثال: أهلاً بك يا سيدتي، يسعدني مساعدتك، أنصحك باستخدام...).
+            3. إجاباتك يجب أن تكون قصيرة، مباشرة، وتركز على حل مشكلة الزبون الطبية.
+            4. استخدم دائماً (الاسم التجاري الدقيق) للمنتج باللغة الفرنسية كما هو مكتوب في الكتالوج لتبدو احترافياً.
+            5. هدفك النهائي: تشخيص المشكلة بناءً على رسالة الزبون، اقتراح المنتج المناسب بالسعر، وأخذ (الاسم، الولاية، ورقم الهاتف) لتأكيد الطلب. 
+            6. تكلفة التوصيل: العاصمة 400 دج، وباقي ولايات الجزائر 600 دج.
+            7. [تنبيه حاسم جداً]: كلمة "غسول / Gel Nettoyant" تُطلق حصرياً على منتجات الوجه. أما "كريم استحمام / Lait" فتُطلق حصرياً على الجسم. لا تخلط بينهما أبداً.
             
-            [قائمة المنتجات الـ 12 المتوفرة فقط]:
+            [الكتالوج الرسمي لمنتجات Massilya المتوفرة]:
+            
             🧴 قسم العناية بالوجه:
-            1. غسول أصفر (للبشرة العادية/المختلطة): 500 دج.
-            2. غسول أزرق (للبشرة الجافة/الحساسة): 500 دج.
-            3. غسول أخضر (للبشرة الدهنية): 500 دج. بالألوفيرا.
-            4. غسول أبيض/أزرق (ضد حب الشباب الخفيف 1%): 500 دج.
-            5. غسول أسود (مقشر قوي 2% BHA): 950 دج.
+            1. MASSILYA Gel Exfoliant Moussant 2% BHA (200ml) - السعر: 950 د.ج (مقشر قوي لحب الشباب والرؤوس السوداء).
+            2. MASSILYA Gel Nettoyant Purifiant Peaux Grasses (250ml) - السعر: 500 د.ج (للبشرة الدهنية).
+            3. MASSILYA Gel Nettoyant Visage Peaux Normales et Mixtes (250ml) - السعر: 500 د.ج (للبشرة العادية والمختلطة).
+            4. MASSILYA Gel Nettoyant Visage Ultra Doux (250ml) - السعر: 500 د.ج (للبشرة الجافة والحساسة).
+            5. MASSILYA Gel Moussant Pour Peaux Acnéiques (250ml) - السعر: 500 د.ج (للبشرة المعرضة لحب الشباب).
             
             💆‍♀️ قسم العناية بالشعر:
-            6. شامبو ضد القشرة (DS): 750 دج.
-            7. محلول ضد تساقط الشعر (Lotion): 1100 دج.
-            8. شامبو للشعر الجاف والمتقصف: 800 دج.
+            6. MASSILYA Lotion Anti Chute (150ml) - السعر: 1100 د.ج (محلول لعلاج تساقط الشعر).
+            7. MASSILYA Shampooing Anti-Pelliculaire (200ml) - السعر: 750 د.ج (شامبو ضد القشرة العادية).
+            8. MASSILYA Shampoing Cheveux Secs et Abimés (200ml) - السعر: 800 د.ج (للشعر الجاف والمتقصف).
+            9. MASSILYA Shampooing Anti Pelliculaire PSO F (200ml) - السعر: 780 د.ج (شامبو مخصص لصدفية الشعر والقشرة الشديدة).
             
             🛁 قسم العناية بالجسم:
-            9. جل الاستحمام (للبشرة الجافة): 500 دج. غليسيرين 5%.
-            10. غسول لحب الشباب (hab chbab): 500 دج. تنظيف عميق للبشرة المعرضة لحب الشباب.
-            11. كريم مقشر 30% يوريا: 850 دج. ممتاز لجلد الدجاجة والشعر تحت الجلد.
-            12. غسول PanOxyl (مستورد): 3,700 دج.
+            10. MASSILYA Crème Anti-Rugosité 30% Urée (120ml) - السعر: 850 د.ج (ممتاز لجلد الدجاجة، الخشونة، والشعر تحت الجلد).
+            11. MASSILYA Lait Hydratant Emollient 5% Visage et Corps - السعر: 850 د.ج (حليب مرطب للوجه والجسم).
+            12. MASSILYA Lait Hydratant Emollient 10% Corps - السعر: 1050 د.ج (مرطب قوي جداً للجسم والبشرة شديدة الجفاف).
+            13. MASSILYA Crème de Douche Lavante (400ml) - السعر: 500 د.ج (كريم استحمام لطيف).
             """
             
             answer = ""
@@ -312,7 +317,7 @@ if prompt := st.chat_input("اكتبوا سؤالكم لخبير Massilya الآ
                     response = chat.send_message(prompt)
                     answer = response.text
                 except Exception as gemini_error:
-                    answer = "عذراً، الخبراء في المختبر مشغولون حالياً بتحضير الطلبيات. يرجى المحاولة بعد قليل! ⏳"
+                    answer = "عذراً، الأطباء في المختبر مشغولون حالياً باستشارات أخرى. يرجى المحاولة بعد قليل! ⏳"
 
             st.write(answer)
             st.session_state.messages.append({"role": "assistant", "content": answer})
@@ -326,7 +331,7 @@ if prompt := st.chat_input("اكتبوا سؤالكم لخبير Massilya الآ
                 digits_count = sum(char.isdigit() for char in prompt)
                 
                 if digits_count >= 8:
-                    spy_message = f"💰🚨 طلبية جديدة لمختبرات Massilya!\n\n👤 رسالة الزبون:\n{prompt}\n\n🤖 رد المندوب:\n{answer}"
+                    spy_message = f"💰🚨 طلبية جديدة لمختبرات Massilya!\n\n👤 رسالة الزبون:\n{prompt}\n\n🤖 تشخيص المندوب:\n{answer}"
                     requests.post(f"https://api.telegram.org/bot{bot_token}/sendMessage", json={"chat_id": chat_id, "text": spy_message})
             except:
                 pass
