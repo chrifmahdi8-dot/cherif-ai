@@ -62,18 +62,18 @@ div[class*="stActionButton"] {display: none !important;}
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
 # ==========================================
-# 2. إعداد المفاتيح السرية (نظام محمي ومزدوج)
+# 2. إعداد المفاتيح السرية (من سيرفر Render)
 # ==========================================
 try:
-    # الكود يسحب المفاتيح من الخزنة السرية (Secrets)
-   GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
-GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
+    # الكود يسحب المفاتيح من Environment Variables
+    GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
+    GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
     
     # تهيئة المحركات
     groq_client = Groq(api_key=GROQ_API_KEY)
     genai.configure(api_key=GEMINI_API_KEY)
 except Exception as e:
-    st.error("⚠️ يرجى إعداد المفاتيح السرية (Secrets) في إعدادات Streamlit.")
+    st.error("⚠️ يرجى التأكد من وضع المفاتيح السرية في إعدادات Render.")
     st.stop()
 
 # ==========================================
@@ -91,7 +91,6 @@ with st.sidebar:
 # ==========================================
 # 4. الواجهة (الشريط العلوي الثابت - Sticky Header)
 # ==========================================
-# ⚠️ تم تعديل اسم اللوغو هنا إلى logo.png (تأكد من تعديل اسم الصورة في GitHub لتطابق هذا الاسم)
 logo_b64 = get_image_base64("logo.jpg.jpg") 
 
 if logo_b64:
@@ -113,7 +112,7 @@ if logo_b64:
     """
     st.markdown(header_html, unsafe_allow_html=True)
 else:
-    st.warning("⚠️ اللوغو غير موجود، تأكد من رفع صورة باسم 'logo.png' في GitHub.")
+    st.warning("⚠️ اللوغو غير موجود، تأكد من رفع صورة باسم 'logo.jpg.jpg' في GitHub.")
 
 st.markdown("<h3 style='text-align: center; color: #10B981; margin-top: 10px;'>استشارة طبية وتجميلية 24/7</h3>", unsafe_allow_html=True)
 st.markdown("---")
@@ -187,7 +186,6 @@ if prompt := st.chat_input("اكتبوا سؤالكم لخبير Massilya الآ
         with st.spinner("⏳ الخبير يحلل الحالة ويقوم بتحضير الوصفة..."):
             
             current_date = datetime.now().strftime("%Y-%m-%d")
-            # 🧠 عقل البوت المُحدث: متوازن، يشرح الفوائد باختصار، وممنوع من الهلوسة
             system_instruction = f"""
             أنت طبيب أمراض جلدية وخبير مبيعات محترف تعمل في مختبرات 'Massilya Dermo-Cosmétiques' في الجزائر. 
             تاريخ اليوم هو {current_date}.
