@@ -65,11 +65,8 @@ st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 # 2. إعداد المفاتيح السرية (من سيرفر Render)
 # ==========================================
 try:
-    # الكود يسحب المفاتيح من Environment Variables
     GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
     GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
-    
-    # تهيئة المحركات
     groq_client = Groq(api_key=GROQ_API_KEY)
     genai.configure(api_key=GEMINI_API_KEY)
 except Exception as e:
