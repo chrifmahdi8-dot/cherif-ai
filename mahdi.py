@@ -25,7 +25,7 @@ def get_image_base64(img_path):
     return None
 
 # ==========================================
-# 🚨 الضربة القاضية: إخفاء علامات Streamlit بالكامل (للحاسوب والهاتف)
+# 🚨 إخفاء Streamlit + إصلاح اتجاه النص العربي/الفرنسي
 # ==========================================
 hide_streamlit_style = """
 <style>
@@ -40,21 +40,30 @@ footer {display: none !important;}
 [data-testid="stToolbar"] {display: none !important;}
 div[data-testid="stToolbar"] {display: none !important;}
 
-/* 3. استهداف العلامة المائية (Watermark) واللوغو الخاص بهم في الهاتف */
+/* 3. استهداف العلامة المائية واللوغو الخاص بهم في الهاتف */
 a[href^="https://streamlit.io"] {display: none !important;}
 img[src*="streamlit"] {display: none !important;}
 svg[title*="Streamlit"] {display: none !important;}
 
-/* 4. إخفاء أي أزرار عائمة (Floating Actions) تظهر في الهواتف */
+/* 4. إخفاء أي أزرار عائمة تظهر في الهواتف */
 button[kind="header"] {display: none !important;}
 .stActionButton {display: none !important;}
 div[class*="stActionButton"] {display: none !important;}
 
 /* ========================================== */
-/* تصميماتك الخاصة لواجهة المحادثة */
+/* تصميمات المحادثة وإصلاح تداخل اللغات (RTL/LTR) */
 /* ========================================== */
+[data-testid="stChatMessageContent"] { 
+    direction: rtl !important; 
+    text-align: right !important; 
+    line-height: 1.6 !important;
+}
 [data-testid="stChatMessageAvatarAssistant"] { background-color: #10B981; }
-[data-testid="stChatMessageAssistant"] { background-color: #F0FDF4; border-radius: 10px; padding: 10px; }
+[data-testid="stChatMessageAssistant"] { 
+    background-color: #F0FDF4; 
+    border-radius: 10px; 
+    padding: 10px; 
+}
 .stButton>button { background-color: #10B981; color: white; border-radius: 5px; border: none; }
 .stButton>button:hover { background-color: #059669; color: white; }
 </style>
@@ -160,7 +169,7 @@ components.html(html_code, height=360, scrolling=False)
 st.markdown("---")
 
 # ==========================================
-# 6. المندوب الذكي المزدوج (Groq الأساسي + Gemini الاحتياطي)
+# 6. المندوب الذكي المزدوج
 # ==========================================
 st.markdown("<h2 style='text-align: right; color: #065F46;'>💬 استشارة العناية بالبشرة</h2>", unsafe_allow_html=True)
 
@@ -190,33 +199,32 @@ if prompt := st.chat_input("اكتبوا سؤالكم لخبير Massilya الآ
             [قواعد التحدث الإجبارية 🚨]: 
             1. تحدث باللغة العربية الفصحى المبسطة، الواضحة، والمهنية جداً.
             2. كن لبقاً مثل طبيب حقيقي يرحب بمرضاه.
-            3. [طول الإجابة والمحتوى]: إجاباتك يجب أن تكون **متوسطة الطول (حوالي 4 إلى 6 أسطر)**. لا تكتب مقالات أو "جرائد"، ولكن في نفس الوقت **يجب أن تشرح فوائد المنتج** الذي تقترحه بأسلوب طبي مقنع وجذاب ليتحمس الزبون لشرائه.
-            4. استخدم دائماً (الاسم التجاري الدقيق) للمنتج باللغة الفرنسية كما هو مكتوب في الكتالوج.
-            5. [منع الهلوسة 🛑]: يُمنع منعاً باتاً التحدث في مواضيع شخصية، أو فلسفية، أو الرد على الاستفزازات. إذا سألك الزبون عن شيء خارج نطاق البشرة والشعر، اعتذر بلباقة وقل أنك خبير مبيعات Massilya فقط.
-            6. هدفك النهائي: تشخيص المشكلة، اقتراح المنتج الأنسب مع شرح فوائده باختصار، وأخذ (الاسم، الولاية، ورقم الهاتف) لتأكيد الطلب. 
-            7. تكلفة التوصيل: العاصمة 400 دج، وباقي ولايات الجزائر 600 دج.
-            8. [تنبيه حاسم]: "Gel Nettoyant" للوجه فقط، و "Lait / Crème de Douche" للجسم فقط.
+            3. [طول الإجابة والمحتوى]: إجاباتك يجب أن تكون متوسطة الطول. اشرح فوائد المنتج بأسلوب طبي مقنع وجذاب.
+            4. [تنسيق اللغات - صارم جداً ⚠️]: عندما تذكر اسم المنتج باللغة الفرنسية، يجب عليك إجبارياً وضعه بين قوسين ( ) أو علامتي تنصيص " " لكي لا يتداخل مع النص العربي.
+            5. [منع الهلوسة 🛑]: يمنع منعاً باتاً استخدام أي حروف لغات أخرى (مثل الحروف الصينية أو غيرها). استخدم فقط العربية للحديث، والفرنسية لكتابة اسم المنتج بين قوسين.
+            6. هدفك النهائي: تشخيص المشكلة، اقتراح المنتج الأنسب، وأخذ (الاسم، الولاية، ورقم الهاتف) لتأكيد الطلب. 
+            7. تكلفة التوصيل: العاصمة 400 دج، وباقي الولايات 600 دج.
             
             [الكتالوج الرسمي لمنتجات Massilya المتوفرة]:
             
             🧴 قسم العناية بالوجه:
-            1. MASSILYA Gel Exfoliant Moussant 2% BHA (200ml) - السعر: 950 د.ج (مقشر قوي لحب الشباب والرؤوس السوداء، ينظف المسام بعمق).
-            2. MASSILYA Gel Nettoyant Purifiant Peaux Grasses (250ml) - السعر: 500 د.ج (للبشرة الدهنية، يقلل الإفرازات الزائدة).
-            3. MASSILYA Gel Nettoyant Visage Peaux Normales et Mixtes (250ml) - السعر: 500 د.ج (للبشرة العادية والمختلطة).
-            4. MASSILYA Gel Nettoyant Visage Ultra Doux (250ml) - السعر: 500 د.ج (للبشرة الجافة والحساسة، ترطيب فائق).
-            5. MASSILYA Gel Moussant Pour Peaux Acnéiques (250ml) - السعر: 500 د.ج (للبشرة المعرضة لحب الشباب).
+            1. (MASSILYA Gel Exfoliant Moussant 2% BHA 200ml) - السعر: 950 د.ج
+            2. (MASSILYA Gel Nettoyant Purifiant Peaux Grasses 250ml) - السعر: 500 د.ج
+            3. (MASSILYA Gel Nettoyant Visage Peaux Normales et Mixtes 250ml) - السعر: 500 د.ج
+            4. (MASSILYA Gel Nettoyant Visage Ultra Doux 250ml) - السعر: 500 د.ج
+            5. (MASSILYA Gel Moussant Pour Peaux Acnéiques 250ml) - السعر: 500 د.ج
             
             💆‍♀️ قسم العناية بالشعر:
-            6. MASSILYA Lotion Anti Chute (150ml) - السعر: 1100 د.ج (محلول مكثف لعلاج تساقط الشعر وتقوية البصيلات).
-            7. MASSILYA Shampooing Anti-Pelliculaire (200ml) - السعر: 750 د.ج (شامبو ضد القشرة العادية).
-            8. MASSILYA Shampoing Cheveux Secs et Abimés (200ml) - السعر: 800 د.ج (للشعر الجاف والمتقصف، يغذي بعمق).
-            9. MASSILYA Shampooing Anti Pelliculaire PSO F (200ml) - السعر: 780 د.ج (مخصص لصدفية الشعر والقشرة الشديدة جداً).
+            6. (MASSILYA Lotion Anti Chute 150ml) - السعر: 1100 د.ج
+            7. (MASSILYA Shampooing Anti-Pelliculaire 200ml) - السعر: 750 د.ج
+            8. (MASSILYA Shampoing Cheveux Secs et Abimés 200ml) - السعر: 800 د.ج
+            9. (MASSILYA Shampooing Anti Pelliculaire PSO F 200ml) - السعر: 780 د.ج
             
             🛁 قسم العناية بالجسم:
-            10. MASSILYA Crème Anti-Rugosité 30% Urée (120ml) - السعر: 850 د.ج (ممتاز لجلد الدجاجة، الخشونة، والشعر تحت الجلد، يقشر ويرطب).
-            11. MASSILYA Lait Hydratant Emollient 5% Visage et Corps - السعر: 850 د.ج (حليب مرطب للوجه والجسم، سريع الامتصاص).
-            12. MASSILYA Lait Hydratant Emollient 10% Corps - السعر: 1050 د.ج (مرطب قوي جداً للجسم والبشرة شديدة الجفاف).
-            13. MASSILYA Crème de Douche Lavante (400ml) - السعر: 500 د.ج (كريم استحمام لطيف يحمي من الجفاف).
+            10. (MASSILYA Crème Anti-Rugosité 30% Urée 120ml) - السعر: 850 د.ج
+            11. (MASSILYA Lait Hydratant Emollient 5% Visage et Corps) - السعر: 850 د.ج
+            12. (MASSILYA Lait Hydratant Emollient 10% Corps) - السعر: 1050 د.ج
+            13. (MASSILYA Crème de Douche Lavante 400ml) - السعر: 500 د.ج
             """
             
             answer = ""
@@ -229,7 +237,7 @@ if prompt := st.chat_input("اكتبوا سؤالكم لخبير Massilya الآ
                 completion = groq_client.chat.completions.create(
                     model="llama-3.3-70b-versatile",
                     messages=api_messages,
-                    temperature=0.4, 
+                    temperature=0.3, 
                     max_completion_tokens=1024,
                     top_p=1,
                     stream=False 
@@ -254,7 +262,7 @@ if prompt := st.chat_input("اكتبوا سؤالكم لخبير Massilya الآ
             st.session_state.messages.append({"role": "assistant", "content": answer})
             
             # ==========================================
-            # 7. جاسوس التليجرام (الإشعارات الفورية)
+            # 7. جاسوس التليجرام
             # ==========================================
             try:
                 bot_token = "8758469394:AAFnu5x88Bn1XZSPyEvninIoQ5-TB3JMpPw"
