@@ -25,36 +25,36 @@ def get_image_base64(img_path):
     return None
 
 # ==========================================
-# 🚨 إخفاء جميع علامات Streamlit (حاسوب + هاتف) 🚨
+# 🚨 الضربة القاضية: إخفاء علامات Streamlit بالكامل (للحاسوب والهاتف)
 # ==========================================
 hide_streamlit_style = """
 <style>
-/* إخفاء القائمة الرئيسية والفوتر */
-#MainMenu {visibility: hidden;}
-footer {visibility: hidden;}
+/* 1. إخفاء الهيدر والفوتر الأساسيين */
+header[data-testid="stHeader"] {display: none !important;}
+footer {display: none !important;}
+#MainMenu {visibility: hidden !important;}
 
-/* إخفاء الهيدر (الأعلى) بالكامل */
-header {visibility: hidden;}
-[data-testid="stHeader"] {display: none !important;}
-
-/* إخفاء أزرار Streamlit في الحاسوب والهاتف */
+/* 2. الخيار النووي: إخفاء أي زر "نشر" أو شريط أدوات */
 .stDeployButton {display: none !important;}
 [data-testid="stAppDeployButton"] {display: none !important;}
 [data-testid="stToolbar"] {display: none !important;}
-[data-testid="stDecoration"] {display: none !important;}
-[data-testid="stStatusWidget"] {display: none !important;}
-div.stFooter, div[data-testid="stFooter"] {display: none !important;}
+div[data-testid="stToolbar"] {display: none !important;}
 
-/* استهداف الزر المائي العائم في نسخة الهواتف */
-.viewerBadge_container {display: none !important;}
-.viewerBadge_link {display: none !important;}
-div[class^="viewerBadge"] {display: none !important;}
+/* 3. استهداف العلامة المائية (Watermark) واللوغو الخاص بهم في الهاتف */
+a[href^="https://streamlit.io"] {display: none !important;}
+img[src*="streamlit"] {display: none !important;}
+svg[title*="Streamlit"] {display: none !important;}
 
-/* تحسين مظهر واجهة المحادثة */
+/* 4. إخفاء أي أزرار عائمة (Floating Actions) تظهر في الهواتف */
+button[kind="header"] {display: none !important;}
+.stActionButton {display: none !important;}
+div[class*="stActionButton"] {display: none !important;}
+
+/* ========================================== */
+/* تصميماتك الخاصة لواجهة المحادثة */
+/* ========================================== */
 [data-testid="stChatMessageAvatarAssistant"] { background-color: #10B981; }
 [data-testid="stChatMessageAssistant"] { background-color: #F0FDF4; border-radius: 10px; padding: 10px; }
-
-/* تخصيص مظهر الأزرار */
 .stButton>button { background-color: #10B981; color: white; border-radius: 5px; border: none; }
 .stButton>button:hover { background-color: #059669; color: white; }
 </style>
@@ -65,9 +65,11 @@ st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 # 2. إعداد المفاتيح السرية (نظام محمي ومزدوج)
 # ==========================================
 try:
+    # الكود يسحب المفاتيح من الخزنة السرية (Secrets)
     GROQ_API_KEY = st.secrets["GROQ_API_KEY"]
     GEMINI_API_KEY = st.secrets["GEMINI_API_KEY"]
     
+    # تهيئة المحركات
     groq_client = Groq(api_key=GROQ_API_KEY)
     genai.configure(api_key=GEMINI_API_KEY)
 except Exception as e:
@@ -81,19 +83,16 @@ with st.sidebar:
     st.markdown("# 🧴 مختبرات Massilya")
     st.markdown("---")
     if st.button("🗑️ استقبال زبون جديد"):
-        st.session_state.messages = [{"role": "assistant", "content": "أهلاً ومرحباً بكم في مختبرات Massilya! 🧴 أنا طبيب ومندوب مبيعات. كيف يمكنني مساعدتكم اليوم؟"}]
+        st.session_state.messages = [{"role": "assistant", "content": "أهلاً ومرحباً بكم في مختبرات Massilya! 🧴 أنا طبيب وخبير العناية بالبشرة والشعر. كيف يمكنني مساعدتكم اليوم؟"}]
         st.rerun() 
     st.markdown("---")
     st.caption("Powered by Sharif AI Solutions")
 
 # ==========================================
-# 4. الواجهة (الشريط العلوي الثابت - البحث الذكي عن اللوغو)
+# 4. الواجهة (الشريط العلوي الثابت - Sticky Header)
 # ==========================================
-logo_b64 = None
-for logo_name in ["logo.png", "logo.jpg", "logo.jpeg", "logo.jpg.jpg"]:
-    logo_b64 = get_image_base64(logo_name)
-    if logo_b64:
-        break
+# ⚠️ تم تعديل اسم اللوغو هنا إلى logo.png (تأكد من تعديل اسم الصورة في GitHub لتطابق هذا الاسم)
+logo_b64 = get_image_base64("logo.jpg.jpg") 
 
 if logo_b64:
     header_html = f"""
@@ -113,6 +112,8 @@ if logo_b64:
     </div>
     """
     st.markdown(header_html, unsafe_allow_html=True)
+else:
+    st.warning("⚠️ اللوغو غير موجود، تأكد من رفع صورة باسم 'logo.png' في GitHub.")
 
 st.markdown("<h3 style='text-align: center; color: #10B981; margin-top: 10px;'>استشارة طبية وتجميلية 24/7</h3>", unsafe_allow_html=True)
 st.markdown("---")
@@ -135,10 +136,7 @@ placeholders = [
 ]
 
 html_code = """
-<!DOCTYPE html>
-<html>
-<head>
-<style>
+<!DOCTYPE html><html><head><style>
     body { margin: 0; padding: 0; font-family: sans-serif; background-color: transparent; }
     .slider-container { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 15px; padding: 15px 5px 25px 5px; scrollbar-width: thin; scrollbar-color: #10B981 transparent; }
     .slider-container::-webkit-scrollbar { height: 8px; }
@@ -148,10 +146,7 @@ html_code = """
     .slider-img { width: 100%; height: 180px; object-fit: contain; border-radius: 10px; margin-bottom: 10px; }
     h4 { color: #10B981; margin: 10px 0 5px 0; font-size: 1.1rem; }
     p { font-size: 0.85rem; color: #444; margin: 0; line-height: 1.4; }
-</style>
-</head>
-<body>
-<div class="slider-container" dir="rtl">
+</style></head><body><div class="slider-container" dir="rtl">
 """
 
 for prod in placeholders:
@@ -174,54 +169,59 @@ st.markdown("---")
 st.markdown("<h2 style='text-align: right; color: #065F46;'>💬 استشارة العناية بالبشرة</h2>", unsafe_allow_html=True)
 
 if "messages" not in st.session_state:
-    st.session_state.messages = [{"role": "assistant", "content": "أهلاً ومرحباً بكم في مختبرات Massilya! 🧴 أنا طبيب ومندوب مبيعات. كيف يمكنني مساعدتكم اليوم؟"}]
+    st.session_state.messages = [
+        {"role": "assistant", "content": "أهلاً ومرحباً بكم في مختبرات Massilya! 🧴 أنا طبيب وخبير العناية بالبشرة والشعر. كيف يمكنني مساعدتكم اليوم؟"}
+    ]
 
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.write(message["content"])
 
 if prompt := st.chat_input("اكتبوا سؤالكم لخبير Massilya الآلي..."):
+    
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
         st.write(prompt)
 
     with st.chat_message("assistant"):
-        with st.spinner("⏳ الخبير يجهز الرد..."):
+        with st.spinner("⏳ الخبير يحلل الحالة ويقوم بتحضير الوصفة..."):
             
-            # --- برمجة شخصية مندوب Massilya (التوازن الذهبي: فوائد بدون جرائد) ---
             current_date = datetime.now().strftime("%Y-%m-%d")
+            # 🧠 عقل البوت المُحدث: متوازن، يشرح الفوائد باختصار، وممنوع من الهلوسة
             system_instruction = f"""
             أنت طبيب أمراض جلدية وخبير مبيعات محترف تعمل في مختبرات 'Massilya Dermo-Cosmétiques' في الجزائر. 
             تاريخ اليوم هو {current_date}.
             
             [قواعد التحدث الإجبارية 🚨]: 
-            1. تحدث باللغة العربية الفصحى المبسطة، الواضحة، والمهنية جداً، ولا تستخدم أحرف أجنبية وسط الكلام (إلا لاسم المنتج).
+            1. تحدث باللغة العربية الفصحى المبسطة، الواضحة، والمهنية جداً.
             2. كن لبقاً مثل طبيب حقيقي يرحب بمرضاه.
-            3. [طول الإجابة]: إجاباتك يجب أن تكون **متوسطة الطول (حوالي 4 إلى 6 أسطر)**. لا تكتب مقالات أو "جرائد"، ولكن يجب أن **تشرح فوائد المنتج** بأسلوب طبي جذاب ليتحمس الزبون.
-            4. استخدم دائماً الاسم التجاري الدقيق للمنتج باللغة الفرنسية.
-            5. [منع الهلوسة 🛑]: يُمنع التحدث في مواضيع شخصية أو الرد على الاستفزازات. إذا سُئلت عن شيء غريب قل: "عذراً، أنا هنا فقط لتقديم استشارات حول منتجات Massilya".
-            6. هدفك النهائي: تشخيص، اقتراح منتج بفوائده، وأخذ (الاسم، الولاية، ورقم الهاتف) لتأكيد الطلب. 
-            7. تكلفة التوصيل: العاصمة 400 دج، وباقي الولايات 600 دج.
+            3. [طول الإجابة والمحتوى]: إجاباتك يجب أن تكون **متوسطة الطول (حوالي 4 إلى 6 أسطر)**. لا تكتب مقالات أو "جرائد"، ولكن في نفس الوقت **يجب أن تشرح فوائد المنتج** الذي تقترحه بأسلوب طبي مقنع وجذاب ليتحمس الزبون لشرائه.
+            4. استخدم دائماً (الاسم التجاري الدقيق) للمنتج باللغة الفرنسية كما هو مكتوب في الكتالوج.
+            5. [منع الهلوسة 🛑]: يُمنع منعاً باتاً التحدث في مواضيع شخصية، أو فلسفية، أو الرد على الاستفزازات. إذا سألك الزبون عن شيء خارج نطاق البشرة والشعر، اعتذر بلباقة وقل أنك خبير مبيعات Massilya فقط.
+            6. هدفك النهائي: تشخيص المشكلة، اقتراح المنتج الأنسب مع شرح فوائده باختصار، وأخذ (الاسم، الولاية، ورقم الهاتف) لتأكيد الطلب. 
+            7. تكلفة التوصيل: العاصمة 400 دج، وباقي ولايات الجزائر 600 دج.
+            8. [تنبيه حاسم]: "Gel Nettoyant" للوجه فقط، و "Lait / Crème de Douche" للجسم فقط.
             
             [الكتالوج الرسمي لمنتجات Massilya المتوفرة]:
-            🧴 الوجه:
-            1. MASSILYA Gel Exfoliant Moussant 2% BHA (200ml) - 950 د.ج (مقشر قوي لحب الشباب والرؤوس السوداء).
-            2. MASSILYA Gel Nettoyant Purifiant Peaux Grasses (250ml) - 500 د.ج (للبشرة الدهنية).
-            3. MASSILYA Gel Nettoyant Visage Peaux Normales et Mixtes (250ml) - 500 د.ج (للبشرة العادية والمختلطة).
-            4. MASSILYA Gel Nettoyant Visage Ultra Doux (250ml) - 500 د.ج (للبشرة الجافة والحساسة).
-            5. MASSILYA Gel Moussant Pour Peaux Acnéiques (250ml) - 500 د.ج (للبشرة المعرضة لحب الشباب).
             
-            💆‍♀️ الشعر:
-            6. MASSILYA Lotion Anti Chute (150ml) - 1100 د.ج (محلول لتساقط الشعر).
-            7. MASSILYA Shampooing Anti-Pelliculaire (200ml) - 750 د.ج (شامبو للقشرة العادية).
-            8. MASSILYA Shampoing Cheveux Secs et Abimés (200ml) - 800 د.ج (للشعر الجاف والمتقصف).
-            9. MASSILYA Shampooing Anti Pelliculaire PSO F (200ml) - 780 د.ج (مخصص لصدفية الشعر).
+            🧴 قسم العناية بالوجه:
+            1. MASSILYA Gel Exfoliant Moussant 2% BHA (200ml) - السعر: 950 د.ج (مقشر قوي لحب الشباب والرؤوس السوداء، ينظف المسام بعمق).
+            2. MASSILYA Gel Nettoyant Purifiant Peaux Grasses (250ml) - السعر: 500 د.ج (للبشرة الدهنية، يقلل الإفرازات الزائدة).
+            3. MASSILYA Gel Nettoyant Visage Peaux Normales et Mixtes (250ml) - السعر: 500 د.ج (للبشرة العادية والمختلطة).
+            4. MASSILYA Gel Nettoyant Visage Ultra Doux (250ml) - السعر: 500 د.ج (للبشرة الجافة والحساسة، ترطيب فائق).
+            5. MASSILYA Gel Moussant Pour Peaux Acnéiques (250ml) - السعر: 500 د.ج (للبشرة المعرضة لحب الشباب).
             
-            🛁 الجسم:
-            10. MASSILYA Crème Anti-Rugosité 30% Urée (120ml) - 850 د.ج (لجلد الدجاجة والخشونة).
-            11. MASSILYA Lait Hydratant Emollient 5% Visage et Corps - 850 د.ج (مرطب للوجه والجسم).
-            12. MASSILYA Lait Hydratant Emollient 10% Corps - 1050 د.ج (مرطب قوي للجسم شديد الجفاف).
-            13. MASSILYA Crème de Douche Lavante (400ml) - 500 د.ج (كريم استحمام).
+            💆‍♀️ قسم العناية بالشعر:
+            6. MASSILYA Lotion Anti Chute (150ml) - السعر: 1100 د.ج (محلول مكثف لعلاج تساقط الشعر وتقوية البصيلات).
+            7. MASSILYA Shampooing Anti-Pelliculaire (200ml) - السعر: 750 د.ج (شامبو ضد القشرة العادية).
+            8. MASSILYA Shampoing Cheveux Secs et Abimés (200ml) - السعر: 800 د.ج (للشعر الجاف والمتقصف، يغذي بعمق).
+            9. MASSILYA Shampooing Anti Pelliculaire PSO F (200ml) - السعر: 780 د.ج (مخصص لصدفية الشعر والقشرة الشديدة جداً).
+            
+            🛁 قسم العناية بالجسم:
+            10. MASSILYA Crème Anti-Rugosité 30% Urée (120ml) - السعر: 850 د.ج (ممتاز لجلد الدجاجة، الخشونة، والشعر تحت الجلد، يقشر ويرطب).
+            11. MASSILYA Lait Hydratant Emollient 5% Visage et Corps - السعر: 850 د.ج (حليب مرطب للوجه والجسم، سريع الامتصاص).
+            12. MASSILYA Lait Hydratant Emollient 10% Corps - السعر: 1050 د.ج (مرطب قوي جداً للجسم والبشرة شديدة الجفاف).
+            13. MASSILYA Crème de Douche Lavante (400ml) - السعر: 500 د.ج (كريم استحمام لطيف يحمي من الجفاف).
             """
             
             answer = ""
@@ -234,8 +234,8 @@ if prompt := st.chat_input("اكتبوا سؤالكم لخبير Massilya الآ
                 completion = groq_client.chat.completions.create(
                     model="llama-3.3-70b-versatile",
                     messages=api_messages,
-                    temperature=0.4, # توازن ممتاز بين الذكاء والصرامة
-                    max_completion_tokens=400, # يسمح بشرح الفوائد دون الثرثرة الطويلة
+                    temperature=0.4, 
+                    max_completion_tokens=1024,
                     top_p=1,
                     stream=False 
                 )
@@ -253,15 +253,20 @@ if prompt := st.chat_input("اكتبوا سؤالكم لخبير Massilya الآ
                     response = chat.send_message(prompt)
                     answer = response.text
                 except Exception as gemini_error:
-                    answer = "عذراً، الأطباء في المختبر مشغولون حالياً. يرجى المحاولة بعد قليل! ⏳"
+                    answer = "عذراً، الأطباء في المختبر مشغولون حالياً باستشارات أخرى. يرجى المحاولة بعد قليل! ⏳"
 
             st.write(answer)
             st.session_state.messages.append({"role": "assistant", "content": answer})
             
+            # ==========================================
+            # 7. جاسوس التليجرام (الإشعارات الفورية)
+            # ==========================================
             try:
                 bot_token = "8758469394:AAFnu5x88Bn1XZSPyEvninIoQ5-TB3JMpPw"
                 chat_id = "5111187631"
-                if sum(char.isdigit() for char in prompt) >= 8:
+                digits_count = sum(char.isdigit() for char in prompt)
+                
+                if digits_count >= 8:
                     spy_message = f"💰🚨 طلبية جديدة لمختبرات Massilya!\n\n👤 رسالة الزبون:\n{prompt}\n\n🤖 تشخيص المندوب:\n{answer}"
                     requests.post(f"https://api.telegram.org/bot{bot_token}/sendMessage", json={"chat_id": chat_id, "text": spy_message})
             except:
