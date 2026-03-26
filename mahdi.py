@@ -24,14 +24,23 @@ def get_image_base64(img_path):
             return base64.b64encode(img_file.read()).decode()
     return None
 
+# إخفاء جميع علامات وأزرار Streamlit (White-labeling)
 hide_streamlit_style = """
 <style>
+/* إخفاء القائمة الرئيسية والفوتر */
 #MainMenu {visibility: hidden;}
 footer {visibility: hidden;}
+
+/* إخفاء الهيدر (الأعلى) بالكامل */
 header {visibility: hidden;}
-div.footer {display: none !important;}
+[data-testid="stHeader"] {display: none !important;}
+
+/* 🚨 إخفاء الزر الأحمر (Deploy) وأيقونات الحالة 🚨 */
+.stDeployButton {display: none !important;}
+[data-testid="stToolbar"] {display: none !important;}
+[data-testid="stDecoration"] {display: none !important;}
+[data-testid="stStatusWidget"] {display: none !important;}
 div.stFooter, div[data-testid="stFooter"] {display: none !important;}
-div.stHeader, div[data-testid="stHeader"] {display: none !important;}
 
 /* تحسين مظهر واجهة المحادثة */
 [data-testid="stChatMessageAvatarAssistant"] { background-color: #10B981; }
@@ -66,7 +75,7 @@ with st.sidebar:
     st.markdown("# 🧴 مختبرات Massilya")
     st.markdown("---")
     if st.button("🗑️ استقبال زبون جديد"):
-        st.session_state.messages = [{"role": "assistant", "content": "أهلاً ومرحباً بكم في مختبرات Massilya! 🧴 أنا طبيب وخبير العناية بالبشرة والشعر. كيف يمكنني مساعدتكم اليوم؟"}]
+        st.session_state.messages = [{"role": "assistant", "content": "أهلاً ومرحباً بكم في مختبرات Massilya! 🧴 أنا خبير العناية بالبشرة والشعر. كيف يمكنني مساعدتكم اليوم؟"}]
         st.rerun() 
     st.markdown("---")
     st.caption("Powered by Sharif AI Solutions")
@@ -130,7 +139,6 @@ st.markdown("---")
 st.markdown("<h2 style='text-align: right; color: #065F46;'>✨ تشكيلة منتجاتنا المتخصصة</h2>", unsafe_allow_html=True)
 st.markdown("<p style='text-align: right; color: #666;'>👈 اسحب لليمين واليسار لتصفح المنتجات</p>", unsafe_allow_html=True)
 
-# تم التعديل لتشمل الأسماء الاحترافية الجديدة
 placeholders = [
     {"name": "Crème 30% Urée", "desc": "علاج فعال لجلد الدجاجة والخشونة", "img_file": "chicken.jpeg"},
     {"name": "Lotion Anti-Chute", "desc": "محلول مكثف لعلاج تساقط الشعر", "img_file": "produit.jpeg"},
@@ -142,7 +150,6 @@ placeholders = [
     {"name": "Crème de Douche", "desc": "كريم استحمام لترطيب الجسم", "img_file": "jel.png"}
 ]
 
-# كود HTML المعزول (Iframe)
 html_code = """
 <!DOCTYPE html>
 <html>
@@ -200,7 +207,6 @@ for prod in placeholders:
         mime_type = "image/jpeg" if ext in ["jpg", "jpeg"] else "image/png"
         img_src = f"data:{mime_type};base64,{img_b64}"
     else:
-        # صورة شفافة فارغة كاحتياطي إذا لم يجد الملف
         img_src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
         
     html_code += f"""
@@ -217,7 +223,6 @@ html_code += """
 </html>
 """
 
-# عرض الكود داخل نافذة معزولة آمنة (Iframe) بارتفاع مناسب
 components.html(html_code, height=360, scrolling=False)
 
 st.markdown("---")
@@ -229,7 +234,7 @@ st.markdown("<h2 style='text-align: right; color: #065F46;'>💬 استشارة 
 
 if "messages" not in st.session_state:
     st.session_state.messages = [
-        {"role": "assistant", "content": "أهلاً ومرحباً بكم في مختبرات Massilya! 🧴 أنا طبيب وخبير العناية بالبشرة والشعر. كيف يمكنني مساعدتكم اليوم؟"}
+        {"role": "assistant", "content": "أهلاً ومرحباً بكم في مختبرات Massilya! 🧴 أنا طبيب ومندوب مبيعات. كيف يمكنني مساعدتكم اليوم؟"}
     ]
 
 for message in st.session_state.messages:
@@ -243,22 +248,22 @@ if prompt := st.chat_input("اكتبوا سؤالكم لخبير Massilya الآ
         st.write(prompt)
 
     with st.chat_message("assistant"):
-        with st.spinner("⏳ الخبير يحلل الحالة ويقوم بتحضير الوصفة..."):
+        with st.spinner("⏳ الخبير يجهز الرد..."):
             
-            # --- برمجة شخصية مندوب Massilya (تحديث الكتالوج الفعلي) ---
+            # --- برمجة شخصية مندوب Massilya (القيود الصارمة) ---
             current_date = datetime.now().strftime("%Y-%m-%d")
             system_instruction = f"""
-            أنت طبيب أمراض جلدية وخبير مبيعات محترف تعمل في مختبرات 'Massilya Dermo-Cosmétiques' في الجزائر. 
+            أنت مندوب مبيعات طبي محترف تعمل في مختبرات 'Massilya Dermo-Cosmétiques' في الجزائر. 
             تاريخ اليوم هو {current_date}.
             
-            [قواعد التحدث الإجبارية 🚨]: 
-            1. تحدث باللغة العربية الفصحى المبسطة، الواضحة، والمهنية جداً.
-            2. كن لبقاً مثل طبيب حقيقي يرحب بمرضاه (مثال: أهلاً بك يا سيدتي، يسعدني مساعدتك، أنصحك باستخدام...).
-            3. إجاباتك يجب أن تكون قصيرة، مباشرة، وتركز على حل مشكلة الزبون الطبية.
-            4. استخدم دائماً (الاسم التجاري الدقيق) للمنتج باللغة الفرنسية كما هو مكتوب في الكتالوج لتبدو احترافياً.
-            5. هدفك النهائي: تشخيص المشكلة بناءً على رسالة الزبون، اقتراح المنتج المناسب بالسعر، وأخذ (الاسم، الولاية، ورقم الهاتف) لتأكيد الطلب. 
-            6. تكلفة التوصيل: العاصمة 400 دج، وباقي ولايات الجزائر 600 دج.
-            7. [تنبيه حاسم جداً]: كلمة "غسول / Gel Nettoyant" تُطلق حصرياً على منتجات الوجه. أما "كريم استحمام / Lait" فتُطلق حصرياً على الجسم. لا تخلط بينهما أبداً.
+            [قواعد التحدث العسكرية الإجبارية 🚨]: 
+            1. إجابتك يجب أن تكون قصيرة جداً ومباشرة (لا تتجاوز 3 أسطر كحد أقصى). ممنوع كتابة فقرات طويلة.
+            2. اقترح منتجاً واحداً فقط (أو اثنين كحد أقصى) الأنسب لحالة الزبون لكي لا تشتته.
+            3. استخدم دائماً (الاسم التجاري الدقيق) للمنتج باللغة الفرنسية كما هو مكتوب في الكتالوج.
+            4. أنت آلة مبيعات طبية فقط. يُمنع منعاً باتاً التحدث في مواضيع شخصية، أو فلسفية، أو تقديم نصائح حياتية.
+            5. إذا سألك الزبون عن شيء خارج منتجات البشرة والشعر، قل له بالحرف: "عذراً، أنا هنا فقط لتقديم الاستشارات الطبية حول منتجات Massilya. كيف يمكنني مساعدتك بخصوص بشرتك أو شعرك؟".
+            6. تحدث باللغة العربية الفصحى فقط، ممنوع استخدام لغات أخرى أو أحرف غريبة في منتصف الكلام (باستثناء الأسماء التجارية للمنتجات).
+            7. هدفك النهائي: تشخيص سريع، اقتراح منتج، وأخذ (الاسم، الولاية، ورقم الهاتف) لتأكيد الطلب. تكلفة التوصيل: العاصمة 400 دج، وباقي الولايات 600 دج.
             
             [الكتالوج الرسمي لمنتجات Massilya المتوفرة]:
             
@@ -295,8 +300,8 @@ if prompt := st.chat_input("اكتبوا سؤالكم لخبير Massilya الآ
                 completion = groq_client.chat.completions.create(
                     model="llama-3.3-70b-versatile",
                     messages=api_messages,
-                    temperature=0.4, 
-                    max_completion_tokens=1024,
+                    temperature=0.3, # تم تقليل درجة الحرارة ليكون أكثر صرامة وأقل هلوسة
+                    max_completion_tokens=250, # تم تقليل عدد الكلمات لمنعه من الثرثرة
                     top_p=1,
                     stream=False 
                 )
